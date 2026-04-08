@@ -1,0 +1,79 @@
+{
+  "$schema": "/etc/xdg/swaync/configschema.json",
+  "positionX": "right",
+  "positionY": "top",
+  "cssPriority": "user",
+  "control-center-width": 450,
+  "fit-to-screen": true,
+  "notification-window-width": 400,
+  "notification-icon-size": 40,
+  "notification-body-image-height": 500,
+  "notification-body-image-width": 500,
+  "notification-inline-replies": true,
+  "notification-2fa-action": false,
+  "timeout": 4,
+  "timeout-low": 4,
+  "timeout-critical": 6,
+  "keyboard-shortcuts": true,
+  "image-visibility": "when-available",
+  "transition-time": 200,
+  "hide-on-clear": false,
+  "hide-on-action": false,
+  "script-fail-notify": true,
+  "widgets": [
+    "buttons-grid",
+    "mpris",
+    "volume",
+    "backlight",
+    "dnd",
+    "notifications"
+  ],
+  "widget-config": {
+    "backlight": {
+      "device": "amdgpu_bl1",
+      "label": "󰃠",
+      "slider": true,
+      "min": 10
+    },
+    "volume": {
+      "device": "default",
+      "label": "",
+      "slider": true
+    },
+    "dnd": {
+      "text": "Do not disturb"
+    },
+    "mpris": {
+      "image-size": 110,
+      "image-radius": 12,
+      "autohide": true,
+      "blacklist": [
+        "org.mpris.MediaPlayer2.playerctld"
+      ]
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "",
+          "command": "swaync-client -cp; hyprlock",
+          "tooltip": "Bloquear Pantalla"
+        },
+        {
+          "label": "",
+          "command": "swaync-client -cp; kitty -e btop",
+          "tooltip": "Monitor de Sistema"
+        },
+        {
+          "label": "",
+          "command": "swaync-client -cp; kitty -e nmtui",
+          "tooltip": "Gestor WiFi"
+        },
+        {
+          "label": "",
+          "command": "swaync-client -cp; wlogout",
+          "tooltip": "Menú de Apagado"
+        }
+      ]
+    }
+  }
+}

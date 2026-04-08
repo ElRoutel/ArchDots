@@ -1,0 +1,185 @@
+{
+    "layer": "top",
+    "position": "top",
+    "mod": "dock",
+    "height": 34,
+    "exclusive": true,
+    "passthrough": false,
+    "gtk-layer-shell": true,
+    "reload_style_on_change": true,
+    "modules-left": ["wlr/taskbar"],
+    "modules-center": ["custom/padd","custom/l_end","clock","custom/padd","mpris","custom/r_end","custom/padd"],
+    "modules-right": ["custom/padd","custom/l_end","tray","backlight","network","pulseaudio#microphone","pulseaudio","custom/notifications","custom/keybindhint","custom/r_end","custom/padd"],
+
+"mpris": {
+    "format": "{title}  —  {artist}",
+    "format-paused": "{title}  —  {artist}",
+    "max-length": 60,
+    "tooltip-format": "{player} — {artist} — {title}\n{position}/{length}"
+},
+
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "rotate": 0,
+        "icon-size": 24,
+        "icon-theme": "Catppuccin-Mocha-icons",
+        "spacing": 0.1,
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "ignore-list": ["Alacritty"],
+        "app_ids-mapping": {
+            "firefoxdeveloperedition": "firefox-developer-edition"
+        }
+    },
+
+    "clock": {
+        "format": "{:%I:%M %p}",
+        "rotate": 0,
+        "format-alt": "{:%d/%m/%y}",
+        "tooltip-format": "<span>{calendar}</span>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "on-scroll": 1,
+            "on-click-right": "mode",
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b>{}</b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-click-forward": "tz_up",
+            "on-click-backward": "tz_down",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+
+    "tray": {
+        "icon-size": 26,
+        "rotate": 0,
+        "spacing": 6
+    },
+
+    "backlight": {
+        "device": "intel_backlight",
+        "rotate": 0,
+        "format": "{icon} {percent}%",
+        "format-icons": [" ", " ", " ", " ", " ", " ", " ", " ", ""],
+        "on-scroll-up": "brightnessctl set 1%+",
+        "on-scroll-down": "brightnessctl set 1%-",
+        "min-length": 6
+    },
+
+    "network": {
+       
+      "tooltip": true,
+        "format-wifi": "",
+        "rotate": 0,
+        "format-ethernet": "<span font='13'> 󰈀 </span>",
+        "tooltip-format": "Network: <big><b>{essid}</b></big>\nSignal: <b>{signaldBm}dBm ({signalStrength}%)</b>\nIP: <b>{ipaddr}/{cidr}</b>",
+        "format-linked": "󰈀  {ifname} (No IP)",
+        "format-disconnected": "󰖪",
+        "tooltip-format-disconnected": "Disconnected",
+        "interval": 2
+    },
+
+    "pulseaudio": {
+        "format": "<span font='11'>{icon}</span>   <span font='11'>{volume}%</span>",
+        "rotate": 0,
+        "format-muted": "<span font-'11'>󰝟   0%</span>",
+        "on-click": "pavucontrol -t 3",
+        "on-click-middle": "volumecontrol.sh -o m",
+        "on-scroll-up": "volumecontrol.sh -o i",
+        "on-scroll-down": "volumecontrol.sh -o d",
+        "tooltip-format": "{icon} {desc} — {volume}%",
+        "scroll-step": 5,
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["󰕿", "󰖀", "󰕾"]
+        }
+    },
+
+    "pulseaudio#microphone": {
+        "format": "<span font='11'>{format_source}</span>",
+        "rotate": 0,
+        "format-source": "󰍬",
+        "format-source-muted": "󰍭",
+        "on-click": "pavucontrol -t 4",
+        "on-click-middle": "volumecontrol.sh -i m",
+        "on-scroll-up": "volumecontrol.sh -i i",
+        "on-scroll-down": "volumecontrol.sh -i d",
+        "tooltip-format": "{source_desc} —  󰍬{source_volume}%",
+        "scroll-step": 1
+    },
+
+    "custom/notifications": {
+        "tooltip": true,
+        "format": "{icon}",
+        "rotate": 0,
+        "format-icons": {
+            "notification": "󰂚 ",
+            "none": "󰂜 ",
+            "dnd-notification": "󰂛 ",
+            "dnd-none": "󰂛 "
+        },
+        "return-type": "json",
+        "exec-if": "which dunstctl",
+        "exec": "notifications.py",
+        "on-click": "sleep 0.1 && dunstctl history-pop",
+        "on-click-middle": "dunstctl history-clear",
+        "on-click-right": "dunstctl close-all",
+        "interval": 1,
+        "escape": true
+    },
+
+    "custom/keybindhint": {
+        "format": "",
+        "rotate": 0,
+        "on-click": "keybinds_hint.sh"
+    },
+
+    "custom/l_end": {
+        "format": " ",
+        "interval": "once",
+        "tooltip": false
+    },
+    "custom/r_end": {
+        "format": " ",
+        "interval": "once",
+        "tooltip": false
+    },
+    "custom/sl_end": {
+        "format": " ",
+        "interval": "once",
+        "tooltip": false
+    },
+    "custom/sr_end": {
+        "format": " ",
+        "interval": "once",
+        "tooltip": false
+    },
+    "custom/rl_end": {
+        "format": " ",
+        "interval": "once",
+        "tooltip": false
+    },
+    "custom/rr_end": {
+        "format": " ",
+        "interval": "once",
+        "tooltip": false
+    },
+    "custom/padd": {
+        "format": "  ",
+        "interval": "once",
+        "tooltip": false
+    }
+}

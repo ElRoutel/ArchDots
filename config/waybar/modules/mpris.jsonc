@@ -1,0 +1,15 @@
+"mpris": {
+    "format": "{player_icon} {title}",
+    "format-paused": "{status_icon} {title}",
+    "player-icons": {
+        "default": "",
+        "spotify": "",
+        "firefox": "",
+        "shairportsync": ""
+    },
+    "status-icons": {
+        "paused": ""
+    },
+    "max-length": 35,
+    "tooltip-format": "{player} • {artist} — {title}\n{position}/{length}"
+},

@@ -1,0 +1,71 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "margin": 0,
+    "spacing": 0,
+
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+
+    "modules-right": [
+        "tray",
+        "network",
+        "pulseaudio",
+        "clock"
+    ],
+
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "format-icons": {
+            "default": ""
+        },
+        "all-outputs": true,
+        "show-special": true,
+        "special-visible-only": false,
+        "active-only": false,
+        "workspace-taskbar": {
+            "enable": true,
+            "format": "{icon}",
+            "icon-size": 16,
+            "icon-theme": "Adwaita",
+            "orientation": "horizontal",
+            "update-active-window": true,
+            "active-window-position": "first",
+            "reverse-direction": false,
+            "on-click-window": "hyprctl dispatch focuswindow address {address}",
+            "on-click": "hyprctl dispatch workspace {name}"
+        }
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8,
+        "mode": "right-click"
+    },
+
+    "network": {
+        "format-wifi": "󰖩  {essid}",
+        "format-ethernet": "󰈀  Wired",
+        "format-disconnected": "󰖪  Offline",
+        "tooltip": false
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "󰖁  Muted",
+        "format-icons": {
+            "default": ["󰕿", "󰖀", "󰕾"]
+        },
+        "on-click": "pavucontrol",
+        "tooltip": false
+    },
+
+    "clock": {
+        "format": "󰥔  {:%H:%M}",
+        "format-alt": "󰃭  {:%A, %b %d}",
+        "tooltip": false
+    }
+}
+

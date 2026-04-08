@@ -1,0 +1,324 @@
+* {
+    border: none;
+    border-radius: 0px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "JetBrainsMono Nerd Font", sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    min-height: 0px;
+}
+
+
+window#waybar {
+    background: transparent;
+}
+
+tooltip {
+    background: rgba(20, 20, 22, 0.95);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+}
+
+/* Taskbar */
+#taskbar {
+    background: rgba(255, 255, 255, 0.11);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 3px 6px;
+    margin: 4px 0;
+}
+
+#taskbar button {
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 6px;
+    margin: 1px;
+    padding: 2px 2px;
+    color: rgba(255, 255, 255, 0.55);
+    background: transparent;
+    transition: all 0.18s ease;
+}
+
+#taskbar button.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 2px 8px;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#taskbar button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    transition: all 0.15s ease;
+}
+
+/* Tray menu */
+#tray menu * { min-height: 16px; }
+#tray menu separator { min-height: 8px; }
+
+/* Módulos generales */
+#backlight,
+#battery,
+#bluetooth,
+#custom-cliphist,
+#clock,
+#custom-cpuinfo,
+#cpu,
+#custom-gpuinfo,
+#idle_inhibitor,
+#custom-keybindhint,
+#language,
+#memory,
+#mpris,
+#network,
+#custom-notifications,
+#custom-power,
+#pulseaudio,
+#custom-spotify,
+#taskbar,
+#custom-theme,
+#tray,
+#custom-updates,
+#custom-wallchange,
+#custom-wbar,
+#window,
+#workspaces,
+#custom-l_end,
+#custom-r_end,
+#custom-sl_end,
+#custom-sr_end,
+#custom-rl_end,
+#custom-rr_end {
+    color: rgba(255, 255, 255, 0.80);
+    background: transparent;
+    opacity: 1;
+    margin: 4px 0;
+    padding:  0 0px;
+}
+
+/* Contenedores laterales */
+#custom-l_end {
+    border-radius: 10px 0 0 20px;
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-right: none;
+    margin-left: 0px;
+    padding: 0 0 0 0px;
+}
+
+#custom-r_end,
+#custom-rl_end {
+    border-radius: 20px 0 0 20px;
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-right: none;
+    margin-left: 0px;
+    padding: 0 0 0 1px;
+}
+
+#custom-rr_end,
+#custom-sr_end {
+    border-radius: 10 20px 20px 0;
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-left: none;
+    margin-right: 0px;
+    padding: 0 4px 0 0;
+}
+
+#custom-sl_end {
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-right: none;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+/* Módulos con fondo y bordes */
+#idle_inhibitor,
+#clock,
+#tray,
+#backlight,
+#network,
+#pulseaudio,
+#pulseaudio.microphone,
+#custom-notifications,
+#custom-keybindhint {
+    background: rgba(55, 55, 55, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 0 0px;
+}
+
+#clock {
+    color: rgba(255, 255, 255, 1);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 0  10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 13px;
+}
+
+#idle_inhibitor {
+    color: rgba(255, 255, 255, 0.50);
+    padding: 0 10px;
+}
+
+#idle_inhibitor.activated {
+    color: rgba(255, 210, 70, 0.95);
+}
+
+#tray { 
+    padding: 0 11px;
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+#network {
+    color: rgba(255, 255, 255, 0.70);
+    padding: 0 13px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#network.disconnected {
+    color: rgba(255, 85, 85, 0.85);
+}
+
+#pulseaudio {
+    color: rgba(255, 255, 255, 8.70);
+    padding: 0 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1)
+}
+
+#pulseaudio.muted {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+#backlight {
+    color: rgba(255, 255, 255, 0.70);
+    padding: 0 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#pulseaudio.microphone {
+    color: rgba(255, 255, 255, 0.50);
+    padding: 0 10px ;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#custom-notifications {
+    color: rgba(255, 255, 255, 0.60);
+    padding: 0 0px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#custom-keybindhint {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Workspaces */
+#workspaces {
+    background: rgba(255, 255, 255, 0.11);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 3px 5px;
+    margin: 4px 0;
+}
+
+#workspaces button {
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 6px;
+    margin: 1px;
+    padding: 2px 6px;
+    color: rgba(255, 255, 255, 0.45);
+    background: transparent;
+    transition: all 0.18s ease;
+}
+
+#workspaces button.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 2px 10px;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* Padding custom */
+#custom-padd {
+    background: transparent;
+    border: none;
+    padding: 0 0px;
+    min-width: 0;
+}
+
+/* Contenedor derecho con degradado (solución al bug visual) */
+#custom-r_end,
+#window {
+    border-radius: 0 20px 20px 0;
+    background: linear-gradient(to right, rgba(25, 25, 28, 0.95), rgba(0, 10, 40, 0.8));
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-left: none;
+    margin-right: 5px;
+    padding: 0 10px 0 0;
+    color: rgba(255, 255, 255, 0.80);
+    opacity: 0;
+    margin: 4px 0;
+}
+
+#window {
+    padding: 0 8px;
+    color: rgba(255, 255, 255, 0.90);
+}
+
+/* MPRIS */
+#mpris {
+    background: rgba(11, 11, 11, 1);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    border-left :  1px solid rgba(255, 255, 255, 0.16);
+    border-right :  1px solid rgba(255, 255, 255, 0.16);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    color: rgba(255, 255, 255, 0.78);
+    padding: 0 0px;
+    min-width: 0px;
+    opacity: 1;
+    transition: color 0.22s ease-out, background-color 0.22s ease-out, opacity 0.22s ease-out, padding-left 0.22s ease-out, padding-right 0.22s ease-out, min-width 0.22s ease-out;
+}
+
+#mpris.playing {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(11, 11, 11, 1);
+    padding: 0 10px;
+    min-width: 160px;
+    opacity: 1;
+}
+
+#mpris.paused {
+    color: rgba(255, 255, 255, 0.42);
+    background: rgba(11, 11, 11, 0.8);
+    padding: 0 8px;
+    min-width: 140px;
+    opacity: 0.66;
+}
+
+#mpris.stopped {
+    color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0 8px;
+    min-width: 0px;
+    opacity: 0.7;
+}
+
+#mpris:hover {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.16);
+}

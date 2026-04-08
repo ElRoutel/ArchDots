@@ -1,0 +1,303 @@
+* {
+    border: none;
+    border-radius: 0px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "JetBrainsMono Nerd Font", sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    min-height: 0px;
+}
+
+@import "theme.css";
+
+window#waybar {
+    background: transparent;
+}
+
+tooltip {
+    background: rgba(20, 20, 22, 0.95);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 12px;
+}
+
+/* ─── Taskbar ─────────────────────────────────────── */
+
+#taskbar {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    padding: 3px 6px;
+    margin: 4px 0;
+}
+
+#taskbar button {
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 6px;
+    margin: 1px 1px;
+    padding: 2px 4px;
+    color: rgba(255, 255, 255, 0.50);
+    background: transparent;
+    transition: all 0.18s ease;
+}
+
+#taskbar button.active {
+    background: rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 2px 6px;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#taskbar button:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.80);
+    transition: all 0.15s ease;
+}
+
+/* ─── Tray ─────────────────────────────────────────── */
+
+#tray menu * {
+    min-height: 16px;
+}
+
+#tray menu separator {
+    min-height: 8px;
+}
+
+/* ─── Reset base de todos los módulos ──────────────── */
+
+#backlight,
+#battery,
+#bluetooth,
+#custom-cliphist,
+#clock,
+#custom-cpuinfo,
+#cpu,
+#custom-gpuinfo,
+#idle_inhibitor,
+#custom-keybindhint,
+#language,
+#memory,
+#mpris,
+#network,
+#custom-notifications,
+#custom-power,
+#pulseaudio,
+#custom-spotify,
+#taskbar,
+#custom-theme,
+#tray,
+#custom-updates,
+#custom-wallchange,
+#custom-wbar,
+#window,
+#workspaces,
+#custom-l_end,
+#custom-r_end,
+#custom-sl_end,
+#custom-sr_end,
+#custom-rl_end,
+#custom-rr_end {
+    color: rgba(255, 255, 255, 0.75);
+    background: transparent;
+    opacity: 1;
+    margin: 4px 0px;
+    padding: 0px 4px;
+}
+
+/* ─── Pill ends ─────────────────────────────────────── */
+
+#custom-l_end {
+    border-radius: 20px 0px 0px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: none;
+    margin-left: 5px;
+    padding-left: 10px;
+    padding-right: 0px;
+}
+
+#custom-r_end {
+    border-radius: 0px 20px 20px 0px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: none;
+    margin-right: 5px;
+    padding-right: 10px;
+    padding-left: 0px;
+}
+
+/* ─── Módulos dentro de píldoras ───────────────────── */
+
+#idle_inhibitor,
+#clock,
+#mpris,
+#tray,
+#backlight,
+#network,
+#pulseaudio,
+#pulseaudio.microphone,
+#custom-notifications,
+#custom-keybindhint {
+    background: rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0px 7px;
+}
+
+/* ─── MPRIS ─────────────────────────────────────────── */
+
+#mpris {
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 400;
+    letter-spacing: 0.15px;
+    padding: 0px 10px;
+}
+
+#mpris.paused {
+    color: rgba(255, 255, 255, 0.38);
+}
+
+/* ─── Clock ─────────────────────────────────────────── */
+
+#clock {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    padding: 0px 8px;
+}
+
+/* ─── Network ───────────────────────────────────────── */
+
+#network {
+    color: rgba(255, 255, 255, 0.60);
+}
+
+#network.disconnected {
+    color: rgba(255, 85, 85, 0.80);
+}
+
+/* ─── Audio ─────────────────────────────────────────── */
+
+#pulseaudio {
+    color: rgba(255, 255, 255, 0.60);
+}
+
+#pulseaudio.muted {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+/* ─── Backlight ─────────────────────────────────────── */
+
+#backlight {
+    color: rgba(255, 255, 255, 0.60);
+}
+
+/* ─── Idle inhibitor ────────────────────────────────── */
+
+#idle_inhibitor {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+#idle_inhibitor.activated {
+    color: rgba(255, 210, 70, 0.95);
+}
+
+/* ─── Notifications ─────────────────────────────────── */
+
+#custom-notifications {
+    color: rgba(255, 255, 255, 0.50);
+    padding: 0px 8px;
+}
+
+/* ─── Keybind hint ──────────────────────────────────── */
+
+#custom-keybindhint {
+    color: rgba(255, 255, 255, 0.35);
+    padding: 0px 6px;
+}
+
+/* ─── Workspaces ────────────────────────────────────── */
+
+#workspaces {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    padding: 3px 5px;
+    margin: 4px 0;
+}
+
+#workspaces button {
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 6px;
+    margin: 1px 1px;
+    padding: 2px 6px;
+    color: rgba(255, 255, 255, 0.40);
+    background: transparent;
+    transition: all 0.18s ease;
+}
+
+#workspaces button.active {
+    background: rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    padding: 2px 10px;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* ─── Padding ───────────────────────────────────────── */
+
+#custom-padd {
+    background: transparent;
+    border: none;
+    padding: 0 1px;
+    min-width: 0;
+}
+
+/* ─── Separadores sl/sr (square ends) ──────────────── */
+
+#custom-sl_end {
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: none;
+    margin-left: 5px;
+    padding-left: 8px;
+}
+
+#custom-sr_end {
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: none;
+    margin-right: 5px;
+    padding-right: 8px;
+}
+
+/* ─── Separadores rl/rr (small radius) ─────────────── */
+
+#custom-rl_end {
+    border-radius: 20px 0px 0px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: none;
+    margin-left: 5px;
+    padding-left: 10px;
+}
+
+#custom-rr_end {
+    border-radius: 0px 20px 20px 0px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: none;
+    margin-right: 5px;
+    padding-right: 10px;
+}

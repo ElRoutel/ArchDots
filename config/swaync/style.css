@@ -1,0 +1,510 @@
+@define-color background      #08080b;
+@define-color text            #acb0d0;
+@define-color text-alt        #787c99;
+@define-color background-alt  #0e0e14;
+@define-color selected        alpha(@text-alt, .4);
+@define-color hover           alpha(@selected, .4);
+@define-color urgent          @text-alt;
+
+* {
+  all: unset;
+  color: @text;
+  font-size: 0.95rem;
+  font-family: "CaskaydiaCove Nerd Font Propo";
+  transition: 200ms;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+window, 
+box, 
+label, 
+image, 
+button, 
+switch, 
+scale, 
+slider, 
+trough, 
+highlight, 
+progress {
+  all: revert;
+}
+
+.notification-row {
+  padding: 5px 0;
+  margin: 0 !important;
+  overflow: hidden;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.notification-row:first-child {
+  padding-top: 0;
+}
+
+.notification-row:last-child {
+  padding-bottom: 0;
+}
+
+.notification {
+  padding: 0 5px;
+  margin: 0 !important;
+  border-radius: 16px;
+  background: rgba(14, 14, 20, 0.65);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1.5px solid rgba(172, 176, 208, 0.25);
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.45);
+  max-width: 100%;
+}
+
+.notification-background {
+  background: transparent;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.notification-background .notification {
+  padding: 14px 16px !important;
+  min-height: 84px !important;
+  background: rgba(14, 14, 20, 0.70);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  overflow: hidden;
+}
+
+.notification.critical {
+  border: 1.5px solid rgba(120, 124, 153, 0.5);
+  box-shadow: 0 4px 12px 0 rgba(120, 124, 153, 0.25),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.notification.low progress,
+.notification.normal progress,
+.notification.critical progress {
+  background: @selected;
+}
+
+.notification .notification-content {
+  margin: 10px;
+}
+
+.notification-content .text-box {
+  margin: 0 0 0 15px;
+}
+
+.notification .summary {
+  color: @text !important;
+  font-weight: 650 !important;
+  font-size: 1.00rem !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  margin-bottom: 2px;
+  padding: 2px 0;
+}
+
+.notification .body {
+  color: @text-alt !important;
+  font-weight: 400 !important;
+  font-size: 0.92rem !important;
+  line-height: 1.45 !important;
+  margin-top: 6px !important;
+  white-space: normal !important;
+}
+
+.notification-content .time,
+.time {
+  color: @text-alt !important;
+  font-weight: 500 !important;
+  font-size: 0.76rem !important;
+  opacity: 0.85 !important;
+  margin-top: 8px !important;
+  white-space: nowrap !important;
+  padding: 2px 0;
+}
+
+.close-button {
+  background: transparent !important;
+  color: transparent !important;
+  border-radius: 999px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  margin: 6px;
+  padding: 2px;
+}
+
+.notification:hover .close-button {
+  color: rgba(172, 176, 208, 0.80) !important;
+  background: rgba(172, 176, 208, 0.18) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(172, 176, 208, 0.25);
+}
+
+.notification-background .close-button:hover {
+  background: rgba(172, 176, 208, 0.18) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.notification > *:last-child > * {
+  min-height: 3.2em;
+}
+
+.notification > *:last-child > * .notification-action {
+  background: rgba(120, 124, 153, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  margin: 0 6px 9px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(172, 176, 208, 0.2);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.notification > *:last-child > * .notification-action:hover {
+  background: rgba(120, 124, 153, 0.45);
+  border: 1px solid rgba(172, 176, 208, 0.3);
+}
+
+.notification > *:last-child > * .notification-action:active {
+  background: rgba(120, 124, 153, 0.5);
+}
+
+.notification-row .inline-reply-entry {
+  padding: 5px 10px;
+  background: rgba(14, 14, 20, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 15px;
+  border: 1px solid rgba(172, 176, 208, 0.2);
+  overflow: hidden;
+}
+
+.notification-row .inline-reply-button {
+  padding: 5px 10px;
+  border-radius: 15px;
+  background: rgba(120, 124, 153, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(172, 176, 208, 0.25);
+  overflow: hidden;
+}
+
+.notification-row .inline-reply .inline-reply-button:hover {
+  background: rgba(120, 124, 153, 0.45);
+  border: 1px solid rgba(172, 176, 208, 0.35);
+}
+
+.control-center {
+  background: rgba(8, 8, 11, 0.80) !important;
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 15px;
+  border: 1.5px solid rgba(172, 176, 208, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  margin: 5px;
+  padding: 12px;
+  overflow: hidden !important;
+  max-width: 500px;
+  position: relative;
+}
+
+.control-center-list,
+.control-center-list > *,
+.control-center-list-viewport,
+.control-center-list row,
+row:hover,
+row:focus,
+row:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.control-center .notification-background {
+  background: rgba(14, 14, 20, 0.50);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(172, 176, 208, 0.15);
+  margin: 7px 0;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.control-center .notification-background .close-button,
+.notification-group-close-button {
+  opacity: 0;
+}
+
+.control-center-list-placeholder {
+  color: @text;
+  opacity: 0.6;
+}
+
+.notification-group {
+  margin: 0 8px;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.notification-group-headers {
+  font-weight: bold;
+  color: @text;
+}
+
+.notification-group-headers > label {
+  margin: 0 3px;
+  font-size: 1rem;
+}
+
+.notification-group-icon {
+  color: @text;
+}
+
+.notification-group-collapse-button,
+.notification-group-close-all-button {
+  background: transparent;
+  color: @text;
+  margin: 4px;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.widget-dnd {
+  padding: 8px 14px;
+  border-radius: 12px;
+  margin: 5px 0;
+  color: @text;
+  background: rgba(14, 14, 20, 0.60);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1.5px solid rgba(172, 176, 208, 0.2);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.widget-dnd > label {
+  font-size: 1rem;
+}
+
+.widget-dnd switch {
+  background: rgba(120, 124, 153, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 2px;
+  border: 1px solid rgba(172, 176, 208, 0.15);
+}
+
+.widget-dnd switch slider {
+  background: linear-gradient(135deg, rgba(172, 176, 208, 1) 0%, rgba(120, 124, 153, 1) 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.widget-volume,
+.widget-backlight {
+  padding: 8px 14px;
+  margin: 5px 0;
+  border-radius: 12px;
+  color: @text;
+  font-weight: 800;
+  background: rgba(14, 14, 20, 0.60);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1.5px solid rgba(172, 176, 208, 0.2);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden !important;
+}
+
+.widget-volume label,
+.widget-backlight label {
+  font-size: 1.1rem;
+}
+
+.widget-volume slider,
+.widget-backlight slider {
+  border-radius: 24px;
+  margin: 0;
+  background: linear-gradient(135deg, rgba(172, 176, 208, 1) 0%, rgba(120, 124, 153, 1) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+.widget-volume trough,
+.widget-backlight trough {
+  background: rgba(120, 124, 153, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-left: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(172, 176, 208, 0.12);
+}
+
+.widget-volume highlight,
+.widget-backlight highlight {
+  padding: 3.5px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(172, 176, 208, 1) 0%, rgba(120, 124, 153, 1) 100%);
+}
+
+.widget-mpris {
+  background: transparent;
+  border-radius: 15px;
+  margin: 5px 0;
+  padding: 0;
+  overflow: hidden !important;
+  position: relative;
+  isolation: isolate;
+}
+
+.mpris-background {
+  filter: blur(60px) brightness(0.6) saturate(130%);
+  opacity: 0.8;
+  transform: scale(1.05);
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+}
+
+.widget-mpris-player {
+  background: rgba(8, 8, 11, 0.55);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1.5px solid rgba(172, 176, 208, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  color: @text;
+  margin: 0 10px;
+  padding: 10px 0 15px;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.widget-mpris-player .image-button:hover {
+  border-radius: 8px;
+  background: rgba(120, 124, 153, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(172, 176, 208, 0.25);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.widget-mpris-player button {
+  padding: 5px;
+  margin: 0 2.5px;
+}
+
+.widget-mpris-player .mpris-overlay > box:last-child {
+  border-radius: 16px;
+  padding: 0 5px;
+  background: rgba(8, 8, 11, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(172, 176, 208, 0.15);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+.widget-mpris-album-art {
+  border-radius: 16px;
+  margin: 6px 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6),
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.widget-mpris-title,
+.widget-mpris-subtitle {
+  font-weight: 700;
+  margin: 0 3px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9),
+               0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.widget-mpris-title {
+  font-size: 1.2rem;
+}
+
+.widget-mpris-subtitle {
+  font-size: 0.9rem;
+  color: @text-alt;
+}
+
+.widget-buttons-grid {
+  border-radius: 12px;
+  padding: 6px 15px;
+  background: rgba(14, 14, 20, 0.60);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1.5px solid rgba(172, 176, 208, 0.2);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden !important;
+}
+
+.widget-buttons-grid button {
+  padding: 10px;
+  margin: 3px;
+  background: rgba(120, 124, 153, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 15px;
+  border: 1px solid rgba(172, 176, 208, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.widget-buttons-grid button > label {
+  font-size: 16px;
+  color: @text;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.widget-buttons-grid button:hover {
+  background: rgba(120, 124, 153, 0.45);
+  border: 1px solid rgba(172, 176, 208, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.widget-buttons-grid button:checked {
+  background: linear-gradient(135deg, rgba(172, 176, 208, 0.9) 0%, rgba(120, 124, 153, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(172, 176, 208, 0.4);
+  box-shadow: 0 4px 12px rgba(172, 176, 208, 0.4),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+.widget-buttons-grid button:checked > label {
+  color: @background;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.widget-dnd switch:hover,
+.widget-buttons-grid button:hover,
+.control-center .notification-group-collapse-button:hover,
+.control-center .notification-group-close-all-button:hover {
+  background: rgba(120, 124, 153, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(172, 176, 208, 0.3);
+}
+
+.blank-window {
+  background: transparent;
+}
+
