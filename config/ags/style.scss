@@ -1,0 +1,21 @@
+// Reset básico
+window {
+    background-color: transparent;
+}
+
+// Estilos específicos usando la clase que añadimos en el TSX
+/* Esto debe ir en tu archivo de estilos */
+.notification-item {
+    background-color: #1e1e2e;
+    border: 1px solid #cba6f7;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    margin-right: 12px;
+}
+
+// Estilos para los textos dentro de la notificación
+.notification-item label {
+    color: #ffffff;
+    font-family: sans-serif;
+}

@@ -1,0 +1,43 @@
+# ~/.config/starship.toml
+
+# Configuración general de cómo se ordenan las cosas
+format = """
+$os\
+$directory\
+$git_branch\
+$git_status\
+$line_break\
+$character"""
+
+# Una línea en blanco antes del prompt para que respire la terminal
+add_newline = true
+
+# 1. El logo de tu sistema (Arch Linux)
+[os]
+disabled = false
+style = "bold blue"
+
+[os.symbols]
+Arch = "󰣇 "
+
+# 2. Tu directorio actual
+[directory]
+style = "bold cyan"
+truncation_length = 3
+truncate_to_repo = false
+read_only = " 󰌾"
+
+# 3. Integración limpia con Git (solo aparece si estás en un repo)
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "bold red"
+format = '([$all_status$ahead_behind]($style) )'
+
+# 4. El cursor minimalista
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold yellow)"

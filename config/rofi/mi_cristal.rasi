@@ -1,0 +1,82 @@
+* {
+    /* Paleta de colores - Liquid Glass */
+    bg-vidrio:          rgba(255, 255, 255, 0.05); /* Fondo casi invisible para que actúe el blur */
+    bg-vidrio-activo:   rgba(255, 255, 255, 0.15); /* Elemento seleccionado */
+    borde-sutil:        rgba(255, 255, 255, 0.1);  /* Simula el reflejo del borde del cristal */
+    texto-principal:    #ffffff;
+    texto-secundario:   rgba(255, 255, 255, 0.6);
+    
+    background-color:   transparent;
+    text-color:         @texto-principal;
+    font:               "JetBrainsMono Nerd Font 11";
+}
+
+window {
+    background-color:   @bg-vidrio;
+    border:             1px;
+    border-color:       @borde-sutil;
+    border-radius:      16px; /* Curvas amplias tipo Apple */
+    width:              600px;
+    padding:            20px;
+}
+
+mainbox {
+    spacing:            15px;
+    children:           [ inputbar, listview ];
+}
+
+inputbar {
+    background-color:   @bg-vidrio-activo;
+    border-radius:      10px;
+    padding:            12px 15px;
+    spacing:            10px;
+    children:           [ prompt, entry ];
+}
+
+prompt {
+    text-color:         @texto-secundario;
+}
+
+entry {
+    placeholder:        "Buscar...";
+    placeholder-color:  @texto-secundario;
+    text-color:         @texto-principal;
+}
+
+listview {
+    lines:              7;
+    spacing:            5px;
+    scrollbar:          false;
+    border:             0px;
+}
+
+element {
+    padding:            10px;
+    border-radius:      8px;
+    spacing:            10px;
+}
+
+element normal.normal {
+    background-color:   transparent;
+}
+
+element alternate.normal {
+    background-color:   transparent;
+}
+
+element selected.normal {
+    background-color:   @bg-vidrio-activo;
+    border:             1px;
+    border-color:       @borde-sutil;
+}
+
+element-icon {
+    size:               24px;
+    background-color:   transparent;
+}
+
+element-text {
+    background-color:   transparent;
+    text-color:         inherit;
+    vertical-align:     0.5;
+}
