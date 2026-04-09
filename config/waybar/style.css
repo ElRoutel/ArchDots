@@ -92,7 +92,7 @@ tooltip {
     background: rgba(255, 255, 255, 0.11);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-left: none;
-    padding: 0 1px 0 0;
+    padding: 0 0px 0 0;
 }
 
 /* Bloques principales */
@@ -106,7 +106,9 @@ tooltip {
     background: rgba(55, 55, 55, 0.50);
     border-top: 1px solid rgba(255, 255, 255, 0.16);
     border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-}
+    padding:0px;
+  
+  }
 
 /* Clock */
 #clock {
@@ -114,7 +116,8 @@ tooltip {
     font-weight: 600;
     font-size: 13px;
     letter-spacing: 0.5px;
-    padding: 0 10px;
+    padding: 0 12px 0 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Tray */
@@ -160,44 +163,41 @@ tooltip {
 
 /* MPRIS */
 #mpris {
-    background: rgba(11, 11, 11, 0.95);
-    border-left: 1px solid rgba(255, 255, 255, 0.16);
-    border-right: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(55, 55, 55, 0.50);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
     font-size: 12px;
     letter-spacing: 0.2px;
     color: rgba(255, 255, 255, 0.78);
-    padding: 0 8px;
+    padding: 0 10px;
     min-width: 0;
     transition: color 0.22s ease, background-color 0.22s ease, opacity 0.22s ease;
 }
 
 #mpris.playing {
     color: rgba(255, 255, 255, 1);
-    background: rgba(11, 11, 11, 1);
-    padding: 0 10px;
-    min-width: 140px;
+    padding: 0 12px;
+    min-width: 0;   /* ← quita el min-width fijo, evita el salto */
     opacity: 1;
 }
 
 #mpris.paused {
     color: rgba(255, 255, 255, 0.46);
-    background: rgba(11, 11, 11, 0.82);
-    padding: 0 8px;
-    min-width: 120px;
+    padding: 0 10px;
+    min-width: 0;
     opacity: 0.72;
 }
 
 #mpris.stopped {
     color: rgba(255, 255, 255, 0.30);
-    background: rgba(255, 255, 255, 0.05);
-    padding: 0 8px;
+    padding: 0;
     min-width: 0;
-    opacity: 0.65;
+    opacity: 0;    /* ← invisible cuando no hay nada, sin ocupar espacio */
 }
 
 #mpris:hover {
     color: rgba(255, 255, 255, 1);
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* Spacer */

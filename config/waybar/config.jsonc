@@ -13,14 +13,13 @@
   ],
 
   "modules-center": [
-    "custom/padd",
-    "custom/l_end",
-    "clock",
-    "custom/padd",
-    "mpris",
-    "custom/r_end",
-    "custom/padd"
-  ],
+  "custom/padd",
+  "custom/l_end",
+  "clock",
+  "mpris",
+  "custom/r_end",
+  "custom/padd"
+],
 
   "modules-right": [
     "custom/padd",
@@ -30,6 +29,7 @@
     "pulseaudio#microphone",
     "pulseaudio",
     //"custom/keybindhint",
+    // "custom/cpu_mode",
     "custom/r_end",
     "custom/padd"
   ],
@@ -114,7 +114,12 @@
       "default": ["󰕿", "󰖀", "󰕾"]
     }
   },
-
+"custom/cpu_mode": {
+    "format": " CPU",
+    "on-click": "sudo cpupower frequency-set -g performance",
+    "on-click-right": "sudo cpupower frequency-set -g powersave",
+    "tooltip": false
+},
   "pulseaudio#microphone": {
     "format": "<span font='11'>{format_source}</span>",
     "format-source": "󰍬",
