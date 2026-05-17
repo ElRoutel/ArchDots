@@ -1,0 +1,93 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "display": {
+    "separator": " █ ",
+    "color": {
+      "separator": "white"
+    }
+  },
+  "modules": [
+    "break",
+    {
+      "type": "title",
+      "key": "   USER",
+      "keyColor": "white"
+    },
+    {
+      "type": "custom",
+      "format": "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓",
+      "outputColor": "white"
+    },
+    {
+      "type": "os",
+      "key": "┃ 󰣇 OS     ",
+      "keyColor": "white",
+      "format": "{2}"
+    },
+    {
+      "type": "kernel",
+      "key": "┃  KERNEL ",
+      "keyColor": "white",
+      "format": "{2}"
+    },
+    {
+      "type": "uptime",
+      "key": "┃ 󱫐 UPTIME ",
+      "keyColor": "white"
+    },
+    {
+      "type": "custom",
+      "format": "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫",
+      "outputColor": "white"
+    },
+    {
+      "type": "wm",
+      "key": "┃ 󱗃 WM     ",
+      "keyColor": "white",
+      "format": "{2}"
+    },
+    {
+      "type": "terminal",
+      "key": "┃  TERM   ",
+      "keyColor": "white"
+    },
+    {
+      "type": "display",
+      "key": "┃ 󰍹 DISPLAY",
+      "keyColor": "white",
+      "format": "{1}x{2} @ {3}Hz"
+    },
+    {
+      "type": "custom",
+      "format": "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫",
+      "outputColor": "white"
+    },
+    {
+      "type": "cpu",
+      "key": "┃  CPU    ",
+      "keyColor": "white",
+      "format": "{1}"
+    },
+    {
+      "type": "gpu",
+      "key": "┃ 󰊴 GPU    ",
+      "keyColor": "white",
+      "format": "{2}"
+    },
+    {
+      "type": "memory",
+      "key": "┃ 󰘚 RAM    ",
+      "keyColor": "white"
+    },
+    {
+      "type": "custom",
+      "format": "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛",
+      "outputColor": "white"
+    },
+    "break",
+    {
+      "type": "colors",
+      "symbol": "square"
+    }
+  ]
+}

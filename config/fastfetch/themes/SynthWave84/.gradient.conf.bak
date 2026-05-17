@@ -1,0 +1,11 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# SYNTHWAVE 84 - MIAMI SUNSET GRADIENT (Diagonal)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+GRADIENT_MODE="diagonal"
+
+GRADIENT_COLORS=(
+  "150,0,255"     # Púrpura Eléctrico
+  "255,0,150"     # Rosa Neón
+  "0,255,255"     # Cian Brillante
+)

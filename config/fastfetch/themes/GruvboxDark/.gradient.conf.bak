@@ -1,0 +1,7 @@
+# Gruvbox Dark - HORIZONTAL GRADIENT
+GRADIENT_MODE="horizontal"
+GRADIENT_COLORS=(
+  "254,128,25"    # Orange
+  "250,189,47"    # Yellow
+  "184,187,38"    # Green
+)

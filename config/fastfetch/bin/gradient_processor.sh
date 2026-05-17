@@ -1,139 +1,104 @@
 #!/bin/bash
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# GRADIENT PROCESSOR - VERSIÓN ROBUSTA
+# GRADIENT PROCESSOR v3.0 - MOTOR MULTI-MODO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Desactivamos 'set -e' estricto para evitar cierres silenciosos. 
-# Controlaremos los errores manualmente.
 set -u
+export LC_NUMERIC=C
+export LC_ALL=C.utf8
 
-# Forzar modo numérico inglés (puntos para decimales)
-export LC_NUMERIC=C 
+GLOBAL_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch"
 
-# ── CONFIGURACIÓN ──
-CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch"
-ASCII_DIR="$CONFIG_DIR/ascii"
-PROCESSED_DIR="$CONFIG_DIR/processedASCII"
-GRADIENT_CONF="$CONFIG_DIR/gradient.conf"
-GRADIENT_BAK="$CONFIG_DIR/.gradient.conf.bak"
+if [ -n "${THEME_BASE:-}" ] && [ -d "$THEME_BASE" ]; then
+    ASCII_DIR="$THEME_BASE/ascii"
+    PROCESSED_DIR="$THEME_BASE/processedASCII"
+    GRADIENT_CONF="$THEME_BASE/gradient.conf"
+    GRADIENT_BAK="$THEME_BASE/.gradient.conf.bak"
+    CONTEXT="Tema: $(basename "$THEME_BASE")"
+else
+    ASCII_DIR="$GLOBAL_CONFIG_DIR/ascii"
+    PROCESSED_DIR="$GLOBAL_CONFIG_DIR/processedASCII"
+    GRADIENT_CONF="$GLOBAL_CONFIG_DIR/gradient.conf"
+    GRADIENT_BAK="$GLOBAL_CONFIG_DIR/.gradient.conf.bak"
+    CONTEXT="Global"
+fi
 
-# ── FUNCIONES ──
+# ── CARGAR CONFIGURACIÓN ──
+# Valores por defecto
+GRADIENT_MODE="vertical"
+GRADIENT_COLORS=("255,255,255" "255,255,255")
 
-log_info() { echo -e "\033[34m[INFO]\033[0m $1"; }
-log_success() { echo -e "\033[32m[OK]\033[0m $1"; }
-log_error() { echo -e "\033[31m[ERROR]\033[0m $1" >&2; }
+if [ -f "$GRADIENT_CONF" ]; then
+    # Intentar cargar como array o variables simples
+    source "$GRADIENT_CONF"
+else
+    echo -e "\033[33m[WARN]\033[0m Falta gradient.conf, usando blanco sólido."
+fi
 
-interpolate() {
-    # awk seguro para evitar errores de división o sintaxis
-    awk -v s="$1" -v e="$2" -v r="$3" 'BEGIN { printf "%.0f", s + (e - s) * r }'
-}
+# Convertir array de colores a una cadena para pasarla a AWK
+COLORS_STR="${GRADIENT_COLORS[*]}"
 
-process_ascii_file() {
+process_file() {
     local input="$1"
     local output="$2"
-    local temp_file="/tmp/fastfetch_proc_$$.tmp"
     
-    # Verificar existencia
-    if [ ! -f "$input" ]; then
-        log_error "No se puede leer: $input"
-        return 1
-    fi
-
-    # Contar líneas (manejo seguro de wc)
-    local total_lines
-    total_lines=$(wc -l < "$input" | tr -d ' ')
-
-    if [ "$total_lines" -eq 0 ]; then
-        log_error "Archivo vacío: $(basename "$input")"
-        return 1
-    fi
-
-    local current_line=0
+    # 1. Medir dimensiones del ASCII
+    local height=$(wc -l < "$input")
+    local width=$(awk '{ if (length($0) > max) max = length($0) } END { print max }' "$input")
     
-    # Bucle de lectura línea a línea
-    while IFS= read -r line || [ -n "$line" ]; do
-        # Calcular ratio (progreso de 0 a 1)
-        local ratio=0
-        if [ "$total_lines" -gt 1 ]; then
-            # Usamos awk para la división flotante
-            ratio=$(awk -v c="$current_line" -v t="$total_lines" 'BEGIN { print c / (t - 1) }')
-        fi
+    # 2. Procesamiento Maestro con AWK
+    awk -v h="$height" -v w="$width" -v mode="$GRADIENT_MODE" -v c_str="$COLORS_STR" '
+    BEGIN {
+        split(c_str, colors, " ")
+        n_colors = 0
+        for (i in colors) n_colors++
+    }
+    
+    function interpolate(c1, c2, r) {
+        split(c1, rgb1, ",")
+        split(c2, rgb2, ",")
+        r_out = int(rgb1[1] + (rgb2[1] - rgb1[1]) * r)
+        g_out = int(rgb1[2] + (rgb2[2] - rgb1[2]) * r)
+        b_out = int(rgb1[3] + (rgb2[3] - rgb1[3]) * r)
+        return r_out ";" g_out ";" b_out
+    }
 
-        # Calcular colores
-        local r=$(interpolate "$COLOR_TOP_R" "$COLOR_BOTTOM_R" "$ratio")
-        local g=$(interpolate "$COLOR_TOP_G" "$COLOR_BOTTOM_G" "$ratio")
-        local b=$(interpolate "$COLOR_TOP_B" "$COLOR_BOTTOM_B" "$ratio")
-
-        # Escribir al temporal
-        echo -e "\u001b[38;2;${r};${g};${b}m${line}\u001b[0m" >> "$temp_file"
+    function get_color(ratio) {
+        if (ratio <= 0) return interpolate(colors[1], colors[1], 0)
+        if (ratio >= 1) return interpolate(colors[n_colors], colors[n_colors], 0)
         
-        ((current_line++))
-    done < "$input"
+        # Encontrar en qué segmento del gradiente cae el ratio
+        seg_idx = int(ratio * (n_colors - 1)) + 1
+        seg_ratio = (ratio - (seg_idx - 1) / (n_colors - 1)) * (n_colors - 1)
+        return interpolate(colors[seg_idx], colors[seg_idx+1], seg_ratio)
+    }
 
-    # Mover archivo final
-    mv "$temp_file" "$output"
+    {
+        y = NR - 1
+        len = length($0)
+        for (x = 1; x <= len; x++) {
+            char = substr($0, x, 1)
+            
+            # Calcular ratio según el modo
+            if (mode == "horizontal") ratio = (w > 1 ? (x - 1) / (w - 1) : 0)
+            else if (mode == "diagonal") ratio = ((h + w - 2) > 0 ? (y + x - 2) / (h + w - 2) : 0)
+            else ratio = (h > 1 ? y / (h - 1) : 0) # vertical por defecto
+
+            color = get_color(ratio)
+            printf "\033[38;2;%sm%s", color, char
+        }
+        printf "\033[0m\n"
+    }
+    ' "$input" > "$output"
 }
 
 # ── MAIN ──
-
-# 1. Verificar directorios
 mkdir -p "$PROCESSED_DIR"
-if [ ! -d "$ASCII_DIR" ]; then
-    log_error "Directorio ASCII no encontrado: $ASCII_DIR"
-    exit 1
-fi
-
-# 2. Cargar Configuración
-if [ -f "$GRADIENT_CONF" ]; then
-    source "$GRADIENT_CONF"
-else
-    log_error "Falta $GRADIENT_CONF"
-    exit 1
-fi
-
-# 3. Detectar si forzamos reprocesado
-force_reprocess=false
-if [ ! -f "$GRADIENT_BAK" ]; then
-    log_info "Primera ejecución detectada."
-    force_reprocess=true
-elif ! cmp -s "$GRADIENT_CONF" "$GRADIENT_BAK"; then
-    log_info "Configuración modificada. Reprocesando..."
-    force_reprocess=true
-fi
-
-# 4. Bucle de Procesamiento (Modo Compatible)
-count=0
-echo "📂 Buscando archivos en $ASCII_DIR..."
-
-# Usamos find con while read para máxima compatibilidad
 find "$ASCII_DIR" -type f -name "*.txt" | while read -r input_file; do
     filename=$(basename "$input_file")
-    output_file="$PROCESSED_DIR/$filename"
-    
-    should_process=false
-    
-    if [ "$force_reprocess" = true ]; then
-        should_process=true
-    elif [ ! -f "$output_file" ]; then
-        should_process=true
-    elif [ "$input_file" -nt "$output_file" ]; then
-        should_process=true
-    fi
-    
-    if [ "$should_process" = true ]; then
-        echo -n "  🎨 Procesando: $filename ... "
-        if process_ascii_file "$input_file" "$output_file"; then
-            echo "Hecho."
-            ((count++))
-        else
-            echo "FALLÓ."
-        fi
-    else
-        echo "  ⏭️  Saltado: $filename (actualizado)"
-    fi
+    echo -n "  🎨 [$GRADIENT_MODE] Procesando: $filename ... "
+    process_file "$input_file" "$PROCESSED_DIR/$filename" && echo "Hecho." || echo "FALLÓ."
 done
 
-# 5. Finalizar
-log_success "Proceso terminado."
 cp "$GRADIENT_CONF" "$GRADIENT_BAK" 2>/dev/null || true

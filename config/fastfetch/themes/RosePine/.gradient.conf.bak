@@ -1,0 +1,7 @@
+# Rose Pine - VERTICAL GRADIENT
+GRADIENT_MODE="vertical"
+GRADIENT_COLORS=(
+  "235,188,186"   # Rose
+  "246,193,119"   # Gold
+  "196,167,231"   # Iris
+)

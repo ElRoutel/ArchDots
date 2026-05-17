@@ -10,7 +10,7 @@
   "modules": [
     {
       "type": "custom",
-      "format": "\u001b[36m   󰄛  ROUTEL"
+      "format": "\u001b[36m    ROUTEL"
     },
     {
       "type": "custom",
