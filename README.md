@@ -19,7 +19,7 @@ Partes del sistema que viven en su propio repo:
 | :--- | :--- | :--- |
 | `config/hypr/` | `~/.config/hypr/` | `hyprland.lua` (config activa), `hypridle.conf`, `hyprlock.conf`, `scripts/`, `shaders/`. `hyprland.conf`/`hyprland2.conf` son la config vieja pre-Lua |
 | `config/kitty/` | `~/.config/kitty/` | Terminal y temas |
-| `config/waybar/` | `~/.config/waybar/` | Barra, módulos y scripts |
+| `config/waybar/` | `~/.config/waybar/` | Barra (todo definido en `config.jsonc` + `style.css`) |
 | `config/swaync/` | `~/.config/swaync/` | Notificaciones y centro de control (tema `tidol-glass`) |
 | `config/rofi/` | `~/.config/rofi/` | `config.rasi`, `theme.rasi`, `mi_cristal.rasi` (`wallpicker.rasi` vive en el repo del puente) |
 | `config/wlogout/`, `config/btop/`, `config/starship.toml` | `~/.config/...` | Menú de apagado, monitor, prompt |
@@ -69,4 +69,3 @@ Enlazado como carpeta completa: `hypr`, `kitty`, `waybar`, `swaync`, `wlogout`. 
 ## Notas
 
 - **Datos privados**: los scripts de Waybar leen hosts, IPs y tokens de `~/.config/.secrets/`, que **no** está en el repo. La MAC del alias `notison` se lee de `~/.config/.secrets/phone-mac.txt`.
-- Los temas de rofi `style_*.rasi` y otros son enlaces a HyDE (`~/.local/share/hyde/rofi/themes/`).
