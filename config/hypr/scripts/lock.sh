@@ -1,14 +1,5 @@
 #!/usr/bin/env bash
-sleep 0.3
-pkill waybar
-hyprlock
-sleep 0.72
-if pgrep -x "waybar" > /dev/null; then
-    killall waybar
-    echo "Waybar oculta. (lock.sh)"
-else
-    # Si NO está corriendo, lo inicia en segundo plano (lo muestra)
-    waybar > /dev/null 2>&1 &
-    echo "Waybar iniciada.(lock.sh)"
+# Bloquear con MacLock (Quickshell). Si MacLock no logra bloquear, usar hyprlock como respaldo.
+if ! sh ~/.config/quickshell/MacLock/lock-via-ipc.sh; then
+    pidof hyprlock >/dev/null || hyprlock
 fi
-

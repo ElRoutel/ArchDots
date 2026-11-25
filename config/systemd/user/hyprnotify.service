@@ -1,0 +1,14 @@
+[Unit]
+Description=Hyprnotify D-Bus Notification Daemon
+After=dbus.service
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/hyprnotify -s
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

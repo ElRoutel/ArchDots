@@ -1,0 +1,17 @@
+[Unit]
+Description=Bitcoin Core Daemon (Pruned & Low Latency)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/bitcoind -daemonwait
+Type=forking
+Restart=on-failure
+
+# Protecciones de CPU y Disco integradas en Systemd
+Nice=19
+IOSchedulingClass=idle
+IOSchedulingPriority=7
+MemoryHigh=2G
+
+[Install]
+WantedBy=default.target

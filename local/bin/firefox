@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Wrapper de Firefox: aplica un fontconfig restringido sólo a este proceso.
+#
+# ~/.local/bin va antes de /usr/bin en tu PATH, así que `firefox` en la
+# terminal entra aquí. Los lanzadores gráficos usan
+# ~/.local/share/applications/firefox.desktop, que también apunta a este script.
+#
+# FONTCONFIG_FILE hace que Firefox (y sólo Firefox) lea nuestro fontconfig, que
+# hereda /etc/fonts/fonts.conf y luego excluye las familias de Windows. El resto
+# del sistema no se ve afectado.
+#
+# Para saltarse el wrapper puntualmente: /usr/lib/firefox/firefox
+set -euo pipefail
+
+FC="${XDG_CONFIG_HOME:-$HOME/.config}/fontconfig/firefox-fonts.conf"
+
+if [ -r "$FC" ]; then
+    export FONTCONFIG_FILE="$FC"
+else
+    # Nunca impedir que el navegador arranque por un problema de config.
+    printf 'firefox-wrapper: aviso: %s no legible; fuentes Windows VISIBLES\n' \
+        "$FC" >&2
+fi
+
+# exec con ruta absoluta: sin esto el wrapper se llamaría a sí mismo.
+exec /usr/lib/firefox/firefox "$@"

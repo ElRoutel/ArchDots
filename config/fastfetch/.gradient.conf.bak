@@ -1,6 +1,0 @@
-# GLOBAL DEFAULT - DIAGONAL ORANGE-RED
-GRADIENT_MODE="diagonal"
-GRADIENT_COLORS=(
-  "255,120,0"     # Naranja
-  "255,0,0"       # Rojo
-)

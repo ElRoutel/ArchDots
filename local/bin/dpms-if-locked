@@ -1,0 +1,8 @@
+#!/bin/sh
+# dpms-if-locked off|on: con la pantalla bloqueada (MacLock activo), apaga el monitor como el iPhone.
+# "on" siempre enciende (lo usa on-resume). Lo llama hypridle.
+case "${1:-off}" in
+    off) [ "$(qs -c MacLock ipc call lockscreen state 2>/dev/null)" = busy ] && hyprctl dispatch 'hl.dsp.dpms("off")' ;;
+    on)  hyprctl dispatch 'hl.dsp.dpms("on")' ;;
+esac
+exit 0

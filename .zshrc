@@ -1,26 +1,23 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # ZSHRC - ROUTEL - V5 FINAL (TOTAL CONTROL & HYPER-SPEED)
 # ═══════════════════════════════════════════════════════════════════════════════
+export GPG_TTY=$(tty)
 
 # ── 0. FASTFETCH (DEBE IR ANTES DEL INSTANT PROMPT) ───────────────────────────
 if [[ -n "${KITTY_WINDOW_ID}" ]] && [[ -z "${FASTFETCH_SHOWN}" ]]; then
     export FASTFETCH_SHOWN=1
     "$HOME/.config/fastfetch/bin/hybrid_launcher.sh"
 fi
+
 export PATH=~/.npm-global/bin:$PATH
+
 # ── 1. OPTIMIZACIÓN DE ARRANQUE (INSTANT PROMPT) ──────────────────────────────
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# ── 3. OPTIMIZACIÓN DE AUTOCOMPLETADO (ELIMINA EL LAG DE 2s) ──────────────────
+# ── 2. OPTIMIZACIÓN DE AUTOCOMPLETADO (OH MY ZSH LO GESTIONA) ─────────────────
 ZSH_DISABLE_COMPFIX="true"
-autoload -Uz compinit
-if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # OH MY ZSH & PLUGINS
@@ -44,23 +41,18 @@ source $ZSH/oh-my-zsh.sh
 # ═══════════════════════════════════════════════════════════════════════════════
 HISTSIZE=5000
 SAVEHIST=5000
-HISTFILE=~/.zsh_historyexport PATH=~/.npm-global/bin:$PATH
+HISTFILE=~/.zsh_history
 setopt append_history share_history hist_ignore_space hist_ignore_all_dups hist_reduce_blanks hist_verify
-
-
+alias brillo='ddcutil setvcp 10'
+alias ff="$HOME/.config/fastfetch/bin/hybrid_launcher.sh"
 alias applemusic='brave --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-gpu-rasterization --ignore-gpu-blocklist --disable-features=WebAppIconInTitlebar --app="https://music.apple.com"'
-
 alias applemusicE='brave --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-gpu-rasterization --ignore-gpu-blocklist --disable-features=WebAppIconInTitlebar --app="https://music.apple.com" && exit'
-
-
 
 mouse-profile() {
     local MOUSE=$(ratbagctl list | grep -i "G502" | cut -f1 -d:)
     ratbagctl "$MOUSE" profile active set "$1"
     echo "→ Perfil $1 activado"
 }
-
-
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ALIASES - NAVEGACIÓN Y SISTEMA
@@ -75,17 +67,21 @@ alias ..='cd ..' \
       cat='bat' \
       grep='grep --color=auto' \
       imgview='kitty +kitten icat'\
-      wallpaper-change='/home/routel/.local/bin/set-wp.sh'
+      wallpaper-change='$HOME/.local/bin/wall-picker'\
+      wp='$HOME/.local/bin/wall-picker'\
+      wlc='wl-copy'
 #===========
-
+alias burpsuite='JAVA_HOME=/usr/lib/jvm/java-26-openjdk burpsuite'
 # Control de optimización de red
 alias net-on='sudo systemctl restart net-optimizer.service && echo "Optimización ACTIVA (2ms Mode)"'
 alias net-off='sudo /usr/local/bin/net-optimizer.sh stop && sudo tc qdisc del dev enp2s0 root 2>/dev/null && echo "Optimización DESACTIVADA (Raw Speed Mode)"'
 alias net-stat='tc -s qdisc show dev ifb0'
 
 alias nsend='nvim --server /tmp/nvim-server --remote-silent'
-alias notison='ancs-linux 50:F4:EB:78:98:3F & disown'
-#
+alias notison='ancs-linux XX:XX:XX:XX:XX:XX & disown'
+alias airplay-reload='sudo systemctl disable --now shairport-sync.service ; systemctl --user restart shairport-sync.service ; systemctl --user status shairport-sync.service'
+# Arregla la cadena AirPlay -> MPRIS -> Waybar (título no aparece en la barra)
+alias airplay-fix='~/.local/bin/fix-airplay.sh'
 # ═══════════════════════════════════════════════════════════════════════════════
 # ALIASES - PAQUETES & DESARROLLO
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -97,9 +93,10 @@ alias v='nvim'
 alias zshconfig='nvim ~/.zshrc'
 alias zshreload='source ~/.zshrc'
 alias reload='hyprctl reload'
-alias tidol='/home/routel/start-tidol.sh'
-alias attach-tidol="tmux attach -t tidol"
-alias stop-tidol="tmux kill-session -t tidol && cd /home/routel/Ds1/Tidol_MusicAPp/Tidol/backend/warp-farm && docker-compose down && sudo systemctl stop docker"
+alias copyimg='wl-paste -t image/png > ' 
+
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # ALIASES - GIT
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -118,6 +115,8 @@ alias farm-up='docker-compose up -d'
 alias farm-down='docker-compose down'
 alias farm-check='for i in {1..5}; do curl -s --proxy http://127.0.0.1:5555 ifconfig.me; echo ""; done'
 
+alias nvfan="~/.local/bin/nvfan.sh"
+
 export FARM_PATH="/home/routel/Ds1/Tidol_MusicAPp/Tidol/backend/warp-farm"
 
 start-proxyw() {
@@ -132,6 +131,7 @@ start-proxyw() {
     }
     cd - > /dev/null
 }
+
 # ============================
 # Remote Access (SSH + Tailscale)
 # ============================
@@ -154,13 +154,13 @@ start-ssh() {
     echo "📱 Ya puedes abrir Termius en tu iPhone."
     echo "🌐 Tu IP de conexión es: \e[1;32m$TS_IP\e[0m"
     echo "TATATA!"
-  }
+}
 
 stop-ssh() {
     echo "🛑 Cerrando puertos y apagando VPN..."
     sudo systemctl stop sshd
     sudo tailscale down
-    # Opcional: sudo systemctl stop tailscaled (si quieres apagar el demonio por completo)
+    # Opcional: sudo systemctl stop tailscaled
     echo "🔒 Acceso remoto desactivado."
 }
 
@@ -177,7 +177,7 @@ extract() {
     if [ -f "$1" ]; then
         case "$1" in
             *.tar.bz2) tar xjf "$1" ;; *.tar.gz) tar xzf "$1" ;;
-            *.rar)     unrar x "$1" ;; *.zip)    unzip "$1"    ;;
+            *.rar)     unrar x "$1" ;; *.zip)    unzip "$1"   ;;
             *.7z)      7z x "$1"    ;; *)        notify-send "'$1' error" ;;
         esac
     fi
@@ -187,6 +187,12 @@ backup-config() {
     local file=~/config-backup-$(date +%Y%m%d-%H%M%S).tar.gz
     tar -czf $file ~/.config/{hypr,waybar,kitty,fastfetch} ~/.zshrc ~/.p10k.zsh 2>/dev/null
     echo "✅ Backup: $file"
+}
+
+img2b64() {
+    local mime=$(file -b --mime-type "$1")
+    echo -n "data:${mime};base64,$(base64 -w 0 "$1")" | wl-copy
+    echo "Imagen $1 copiada al portapapeles en formato Base64!"
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -204,7 +210,17 @@ function pyenv() {
     command pyenv "$@"
 }
 
+# LAZY LOAD NVM
+nvm_load() {
+    unset -f nvm node npm npx
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+}
 
+nvm() { nvm_load; nvm "$@"; }
+node() { nvm_load; node "$@"; }
+npm() { nvm_load; npm "$@"; }
+npx() { nvm_load; npx "$@"; }
 
 # LAZY LOAD DIRENV
 function _direnv_hook() {
@@ -214,14 +230,40 @@ function _direnv_hook() {
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd _direnv_hook
 
+# Atajo para listar archivos con Alt + Shift + L
+bindkey -s '^[^L' 'ls \n'
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # POWERLEVEL10K & FASTFETCH
 # ═══════════════════════════════════════════════════════════════════════════════
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 alias fastfetch="$HOME/.config/fastfetch/bin/hybrid_launcher.sh"
-eval "$(starship init zsh)"
+
+# Romper el alias viejo para que Zsh no se confunda al compilar la función
+unalias tidol 2>/dev/null
+
+tidol() {
+    if [ -z "$1" ]; then
+        echo "🎵 Uso: tidol \"Nombre del artista o canción\""
+        return 1
+    fi
+    
+    # Reemplazamos los espacios por %20 para la URL de red
+    QUERY=$(echo "$1" | sed 's/ /%20/g')
+    echo "🔥 Inyectando $1 Tidol Core..."
+    
+    # Lanzamos VLC en segundo plano de forma totalmente silenciosa
+    nohup cvlc "http://localhost:3000/api/v1/search/m3u?q=$QUERY" > /dev/null 2>&1 &
+}
+
+# Added by Antigravity CLI installer
+export PATH="/home/routel/.local/bin:$PATH"
+
 # ═══════════════════════════════════════════════════════════════════════════════
-#      SI HAY ALGO DESPUES DE ESTO EL ARCHIVO PUDO SER EDITADO AUTOMATICAMENTE
+#    SI HAY ALGO DESPUES DE ESTO EL ARCHIVO PUDO SER EDITADO AUTOMATICAMENTE
 # ═══════════════════════════════════════════════════════════════════════════════
+
+
 

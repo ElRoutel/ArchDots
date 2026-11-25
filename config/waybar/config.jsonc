@@ -23,9 +23,9 @@
 
   "modules-right": [
     "custom/padd",
-    "custom/l_end",
+   // "custom/l_end",
     "tray",
-    "network",
+ //   "network",
     "pulseaudio#microphone",
     "pulseaudio",
     //"custom/keybindhint",

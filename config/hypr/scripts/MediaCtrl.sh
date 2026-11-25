@@ -354,9 +354,7 @@ update_files() {
 }
 
 daemon_loop() {
-  while sleep 2; do
-    update_files || true
-  done
+  while true; do update_files || true; sleep 2; done
 }
 
 case "$ACTION" in

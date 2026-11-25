@@ -30,9 +30,9 @@
   ],
   "widget-config": {
     "backlight": {
-      "device": "amdgpu_bl1",
+      "device": "ddcci2",
+      "subsystem": "backlight",
       "label": "󰃠",
-      "slider": true,
       "min": 10
     },
     "volume": {
@@ -44,8 +44,7 @@
       "text": "Do not disturb"
     },
     "mpris": {
-      "image-size": 110,
-      "image-radius": 12,
+      "show-album-art": "never",
       "autohide": true,
       "blacklist": [
         "org.mpris.MediaPlayer2.playerctld"
@@ -55,7 +54,7 @@
       "actions": [
         {
           "label": "",
-          "command": "swaync-client -cp; hyprlock",
+          "command": "swaync-client -cp; sh ~/.config/quickshell/MacLock/lock-via-ipc.sh",
           "tooltip": "Bloquear Pantalla"
         },
         {

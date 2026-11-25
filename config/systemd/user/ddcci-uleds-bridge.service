@@ -1,0 +1,22 @@
+[Unit]
+Description=Puente DDC/CI a uleds para el slider de brillo de swaync
+Documentation=file:///home/routel/.local/bin/ddcci-uleds-bridge
+After=graphical-session.target
+PartOf=graphical-session.target
+# swaync solo dibuja el widget de brillo si el LED ya existe al arrancar.
+# Con Type=notify, systemd espera al READY=1 del puente antes de lanzarlo.
+Before=swaync.service
+
+[Service]
+Type=notify
+NotifyAccess=main
+ExecStart=%h/.local/bin/ddcci-uleds-bridge
+# `ddcutil detect` puede tardar varios segundos en buses I2C lentos.
+TimeoutStartSec=90
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target

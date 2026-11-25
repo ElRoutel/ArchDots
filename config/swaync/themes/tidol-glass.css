@@ -1,0 +1,852 @@
+/* ============================================================================
+ * TIDOL GLASS — swaync theme
+ * ----------------------------------------------------------------------------
+ * Portado desde el design system de Tidol (tidol-frontend):
+ *   src/styles/design-tokens.css · design-system.css · glass.css · AppBlur.css
+ *
+ * Ideas que se conservan del original:
+ *   · Glass card = casi transparente (rgba(255,255,255,.03)) + borde 1px .08,
+ *     apoyandose en el fondo desenfocado para dar profundidad — no en un
+ *     fondo opaco propio.
+ *   · Orbes verdes ambientales detras del cristal (AppBlur.css .tidol-app-orb)
+ *     emulados con radial-gradient, ya que GTK no puede animar capas sueltas.
+ *   · Texto = blanco con opacidad (.95/.60/.40/.25), nunca gris plano.
+ *   · Acento #1DB954 → #1ED760 y shadow-glow-primary para estados activos.
+ *   · Easing Apple cubic-bezier(.25,.8,.25,1) y radios 8/12/16/20.
+ *
+ * TIPOGRAFIA: SF Pro Text (todo el tema esta por debajo de 20px, que es el
+ * umbral en el que Apple cambia a SF Pro Display). Pesos Regular/Medium/
+ * Semibold; se usa Semibold 600 en titulos en vez del Bold 700 de Tidol,
+ * porque el Semibold de SF Pro ya pesa lo que el Bold de Inter.
+ * El tracking sigue la tabla optica de Apple para SF Pro Text: negativo y
+ * decreciente al bajar de tamano, hasta 0 a los 12px.
+ *
+ * ICONOS: las etiquetas que son un glifo Nerd Font (botones de la rejilla y
+ * los iconos de volumen/brillo) declaran la Nerd Font PRIMERO, no SF Pro.
+ * Motivo: SF Mono —que si viene parcheada— reclama U+F023/F2DB/F1EB/F011/F028,
+ * asi que basta con no meterla en la pila. SF Pro Text/Display no cubren
+ * ninguno de esos codepoints, de modo que el texto normal puede llevar SF Pro
+ * y el fallback por glifo de Pango resuelve cualquier icono suelto.
+ *
+ * NOTA GTK: swaync 0.12 es GTK4 y NO soporta backdrop-filter, transform,
+ * position, z-index, overflow ni max-width. El desenfoque real lo aporta
+ * Hyprland via `layerrule = blur on, match:namespace swaync-*`. Por eso aqui
+ * solo hay propiedades que GTK4 entiende de verdad.
+ * ==========================================================================*/
+
+
+/* ============================================================
+ *  TOKENS
+ * ============================================================ */
+
+/* Marca */
+@define-color tidol-green        #1DB954;
+@define-color tidol-green-bright #1ED760;
+@define-color tidol-green-dark   #169C46;
+
+/* Superficies */
+@define-color tidol-bg-base      #0A0A0A;
+@define-color tidol-bg-elevated  #121212;
+
+/* Texto: blanco con opacidad, nunca gris plano */
+@define-color tidol-text         rgba(255, 255, 255, 0.95);
+@define-color tidol-text-2       rgba(255, 255, 255, 0.60);
+@define-color tidol-text-3       rgba(255, 255, 255, 0.40);
+@define-color tidol-text-off     rgba(255, 255, 255, 0.25);
+
+/* Cristal */
+@define-color tidol-glass        rgba(255, 255, 255, 0.03);
+@define-color tidol-glass-hover  rgba(255, 255, 255, 0.06);
+@define-color tidol-border       rgba(255, 255, 255, 0.08);
+@define-color tidol-border-hover rgba(255, 255, 255, 0.15);
+
+/* Urgencia critica (Tidol no tiene rojo; se anade por legibilidad) */
+@define-color tidol-critical     #FF4D5E;
+
+
+/* ============================================================
+ *  RESET
+ * ============================================================ */
+
+* {
+  all: unset;
+  color: @tidol-text;
+  /* SF Pro Text primero; la Nerd Font queda detras solo como fallback por
+     glifo. Nunca "SF Mono" aqui: pisaria los iconos Font Awesome. */
+  font-family: "SF Pro Text", "SF Pro Display", "CaskaydiaCove Nerd Font", "Symbols Nerd Font", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  /* --ease-apple / --duration-fast */
+  transition: 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Ojo: GTK4 solo admite initial|inherit|unset en `all`. El tema anterior tenia
+   aqui un `all: revert` que GTK descartaba con error de parseo, asi que el
+   reset de arriba ya era efectivamente total. Se omite y cada widget define
+   su aspecto de forma explicita mas abajo. */
+
+
+/* ============================================================
+ *  VENTANAS BASE
+ * ============================================================ */
+
+.floating-notifications.background,
+.blank-window {
+  background: transparent;
+}
+
+
+/* ============================================================
+ *  NOTIFICACION — glass card
+ *  (.glass-card de glass.css: transparente + borde sutil)
+ * ============================================================ */
+
+.notification-row {
+  padding: 6px 0;
+  margin: 0;
+  background: transparent;
+}
+
+.notification-row:first-child {
+  padding-top: 0;
+}
+
+.notification-row:last-child {
+  padding-bottom: 0;
+}
+
+.notification-background {
+  background: transparent;
+  margin: 0;
+}
+
+.notification-background .notification {
+  padding: 14px 16px;
+  min-height: 80px;
+  /* --radius-lg */
+  border-radius: 16px;
+  /* Orbe verde superior izquierdo + cuerpo elevado semitransparente */
+  background:
+    radial-gradient(circle at 10% -10%, rgba(29, 185, 84, 0.11) 0%, rgba(29, 185, 84, 0) 60%),
+    rgba(18, 18, 18, 0.62);
+  border: 1px solid @tidol-border;
+  /* --shadow-deep + --shadow-inset-border */
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+}
+
+/* .glass-card:hover — el translateY(-2px) del original no existe en GTK,
+   se traduce a mas luz en borde y sombra. */
+.notification-background .notification:hover {
+  background:
+    radial-gradient(circle at 10% -10%, rgba(29, 185, 84, 0.15) 0%, rgba(29, 185, 84, 0) 60%),
+    rgba(26, 26, 26, 0.72);
+  border-color: @tidol-border-hover;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.50),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+}
+
+.notification-background .notification.low {
+  background:
+    radial-gradient(circle at 10% -10%, rgba(29, 185, 84, 0.06) 0%, rgba(29, 185, 84, 0) 60%),
+    rgba(18, 18, 18, 0.55);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.notification-background .notification.critical {
+  background:
+    radial-gradient(circle at 10% -10%, rgba(255, 77, 94, 0.14) 0%, rgba(255, 77, 94, 0) 60%),
+    rgba(20, 14, 15, 0.70);
+  border-color: rgba(255, 77, 94, 0.40);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.45),
+    0 0 24px -6px rgba(255, 77, 94, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+}
+
+.notification-content {
+  margin: 0;
+  padding: 0;
+}
+
+.notification-content .text-box {
+  margin: 0 0 0 14px;
+}
+
+.notification-content .image,
+.notification-content .app-icon {
+  border-radius: 12px;
+}
+
+
+/* ============================================================
+ *  TIPOGRAFIA  (.text-h3 / .text-body / .text-small)
+ * ============================================================ */
+
+/* ~16px · SF Pro Text Semibold · tracking -0.017em */
+.notification .summary {
+  color: @tidol-text;
+  font-size: 1.0rem;
+  font-weight: 600;
+  letter-spacing: -0.27px;
+}
+
+/* ~14px · Regular · tracking -0.011em */
+.notification .body {
+  color: @tidol-text-2;
+  font-size: 0.90rem;
+  font-weight: 400;
+  letter-spacing: -0.16px;
+  margin-top: 4px;
+}
+
+/* 12px · el tracking de SF Pro Text se anula a este tamano */
+.notification .time,
+.notification-content .time {
+  color: @tidol-text-3;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-top: 6px;
+}
+
+.notification.critical .summary {
+  color: @tidol-critical;
+}
+
+
+/* ============================================================
+ *  BOTON CERRAR  (--radius-full)
+ * ============================================================ */
+
+.close-button {
+  background: transparent;
+  color: transparent;
+  border: none;
+  border-radius: 9999px;
+  min-width: 24px;
+  min-height: 24px;
+  margin: 8px;
+  padding: 0;
+}
+
+.notification-background:hover .close-button,
+.notification:hover .close-button {
+  background: rgba(255, 255, 255, 0.08);
+  color: @tidol-text-2;
+}
+
+.close-button:hover {
+  background: rgba(255, 77, 94, 0.75);
+  color: #FFFFFF;
+}
+
+
+/* ============================================================
+ *  ACCIONES / RESPUESTA EN LINEA
+ * ============================================================ */
+
+.notification-action {
+  background: @tidol-glass;
+  border: 1px solid @tidol-border;
+  /* --radius-sm+ */
+  border-radius: 10px;
+  color: @tidol-text-2;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: -0.13px;
+  margin: 0 5px 8px 5px;
+  padding: 9px 12px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.notification-action:hover {
+  background: @tidol-glass-hover;
+  border-color: @tidol-border-hover;
+  color: @tidol-text;
+}
+
+.notification-action:active {
+  background: rgba(29, 185, 84, 0.22);
+  border-color: rgba(29, 185, 84, 0.45);
+  color: #FFFFFF;
+}
+
+.inline-reply {
+  margin: 0 5px 8px 5px;
+}
+
+.inline-reply-entry {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid @tidol-border;
+  border-radius: 10px;
+  color: @tidol-text;
+  caret-color: @tidol-green;
+  padding: 8px 12px;
+  margin-right: 6px;
+}
+
+.inline-reply-entry:focus {
+  border-color: rgba(29, 185, 84, 0.50);
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.15);
+}
+
+.inline-reply-button {
+  background: @tidol-glass;
+  border: 1px solid @tidol-border;
+  border-radius: 10px;
+  color: @tidol-text-2;
+  font-weight: 500;
+  letter-spacing: -0.13px;
+  padding: 8px 14px;
+}
+
+.inline-reply-button:hover {
+  background: rgba(29, 185, 84, 0.22);
+  border-color: rgba(29, 185, 84, 0.45);
+  color: #FFFFFF;
+}
+
+.inline-reply-button:disabled {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.05);
+  color: @tidol-text-off;
+}
+
+
+/* ============================================================
+ *  CONTROL CENTER
+ *  Panel principal: orbes verdes (AppBlur.css) sobre --bg-base
+ * ============================================================ */
+
+.control-center {
+  background:
+    radial-gradient(circle at 12% -8%,  rgba(29, 185, 84, 0.16) 0%, rgba(29, 185, 84, 0) 55%),
+    radial-gradient(circle at 96% 106%, rgba(22, 156, 70, 0.13) 0%, rgba(22, 156, 70, 0) 50%),
+    rgba(10, 10, 10, 0.72);
+  color: @tidol-text;
+  border: 1px solid @tidol-border;
+  /* --radius-xl */
+  border-radius: 20px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+  margin: 8px;
+  padding: 14px;
+}
+
+.control-center-list,
+.control-center-list-viewport,
+.control-center .notification-row,
+list,
+list row,
+row {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+row:hover,
+row:focus,
+row:active,
+row:selected {
+  background: transparent;
+  outline: none;
+}
+
+/* Dentro del panel el cristal es mas sutil que en los popups: se acerca al
+   .glass-card de Tidol (casi transparente, definido por su borde). No se baja
+   mas la opacidad porque swaync apila las tarjetas de un grupo colapsado y
+   un fondo demasiado transparente deja ver el texto de las de detras. */
+.control-center .notification-background .notification {
+  background:
+    linear-gradient(0deg, @tidol-glass 0%, @tidol-glass 100%),
+    rgba(16, 16, 16, 0.78);
+  border: 1px solid @tidol-border;
+  border-radius: 16px;
+  min-height: 72px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.control-center .notification-background .notification:hover {
+  background:
+    linear-gradient(0deg, @tidol-glass-hover 0%, @tidol-glass-hover 100%),
+    rgba(24, 24, 24, 0.85);
+  border-color: @tidol-border-hover;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+}
+
+/* Grupo colapsado: las tarjetas se solapan fisicamente, asi que las de la
+   pila tienen que ser opacas o se lee el texto de las de debajo. */
+.notification-group.collapsed .notification-row .notification {
+  background: #141414;
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.notification-group.collapsed:hover .notification-row .notification {
+  background: #1C1C1C;
+  border-color: @tidol-border-hover;
+}
+
+.control-center-list-placeholder {
+  color: @tidol-text-off;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Scrollbar fina, como el ::-webkit-scrollbar de index.css */
+.control-center scrollbar,
+.control-center scrollbar trough {
+  background: transparent;
+  border: none;
+}
+
+.control-center scrollbar slider {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  min-width: 5px;
+  min-height: 5px;
+}
+
+.control-center scrollbar slider:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+
+/* ============================================================
+ *  GRUPOS DE NOTIFICACIONES
+ * ============================================================ */
+
+.notification-group {
+  margin: 0 2px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ~13px de etiqueta secundaria: Medium y tracking ligeramente positivo, que
+   es lo que Apple hace por debajo de 12pt para que no se cierre. */
+.notification-group-headers {
+  color: @tidol-text-3;
+  font-size: 0.80rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  margin: 4px 8px;
+}
+
+.notification-group-headers > label {
+  color: @tidol-text-3;
+  margin: 0 4px;
+}
+
+.notification-group-icon {
+  color: @tidol-green;
+}
+
+.notification-group.collapsed .notification-group-icon {
+  color: @tidol-text-3;
+}
+
+.notification-group-collapse-button,
+.notification-group-close-all-button {
+  background: transparent;
+  color: @tidol-text-3;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 6px;
+  margin: 4px;
+}
+
+.notification-group-collapse-button:hover,
+.notification-group-close-all-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: @tidol-text;
+}
+
+
+/* ============================================================
+ *  WIDGETS — paneles de cristal
+ * ============================================================ */
+
+.widget-dnd,
+.widget-volume,
+.widget-backlight,
+.widget-buttons-grid {
+  background: @tidol-glass;
+  border: 1px solid @tidol-border;
+  /* --radius-md */
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  color: @tidol-text;
+  margin: 6px 0;
+  padding: 10px 14px;
+}
+
+.widget-dnd:hover,
+.widget-volume:hover,
+.widget-backlight:hover,
+.widget-buttons-grid:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Texto: SF Pro Text Medium, ~15px, tracking -0.014em */
+.widget-dnd > label {
+  color: @tidol-text-2;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.21px;
+}
+
+/* Icono puro ( y 󰃠): Nerd Font por delante y sin tracking, que
+   desplazaria el glifo dentro de su caja. */
+.widget-volume > label,
+.widget-backlight > label {
+  font-family: "CaskaydiaCove Nerd Font", "Symbols Nerd Font", monospace;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: @tidol-text-2;
+  font-size: 1.05rem;
+}
+
+
+/* --- Do not disturb ------------------------------------------------------ */
+
+.widget-dnd > switch {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid @tidol-border;
+  border-radius: 9999px;
+  min-width: 46px;
+  min-height: 26px;
+  padding: 2px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+.widget-dnd > switch:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: @tidol-border-hover;
+}
+
+.widget-dnd > switch:checked {
+  background: linear-gradient(135deg, @tidol-green 0%, @tidol-green-bright 100%);
+  border-color: rgba(30, 215, 96, 0.45);
+  /* --shadow-glow-primary, escalado al tamano del switch */
+  box-shadow: 0 8px 18px -6px rgba(29, 185, 84, 0.60);
+}
+
+.widget-dnd > switch slider {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 9999px;
+  min-width: 20px;
+  min-height: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+
+/* --- Sliders de volumen y brillo ---------------------------------------- */
+
+.widget-volume trough,
+.widget-backlight trough {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 9999px;
+  min-height: 6px;
+  margin-left: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.widget-volume highlight,
+.widget-backlight highlight {
+  /* --color-primary → --color-primary-hover */
+  background: linear-gradient(90deg, @tidol-green-dark 0%, @tidol-green 55%, @tidol-green-bright 100%);
+  border-radius: 9999px;
+  min-height: 6px;
+}
+
+.widget-volume slider,
+.widget-backlight slider {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 9999px;
+  min-width: 15px;
+  min-height: 15px;
+  margin: -6px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.50),
+    0 0 14px rgba(29, 185, 84, 0.45);
+}
+
+.widget-volume slider:hover,
+.widget-backlight slider:hover {
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.55),
+    0 0 20px rgba(30, 215, 96, 0.70);
+}
+
+
+/* --- Botones de accion --------------------------------------------------- */
+
+.widget-buttons-grid {
+  padding: 8px;
+}
+
+.widget-buttons-grid button {
+  background: @tidol-glass;
+  border: 1px solid @tidol-border;
+  border-radius: 12px;
+  color: @tidol-text-2;
+  padding: 12px;
+  margin: 4px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Icono puro (, , , ): Nerd Font anclada, sin tracking. */
+.widget-buttons-grid button > label {
+  font-family: "CaskaydiaCove Nerd Font", "Symbols Nerd Font", monospace;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: @tidol-text-2;
+  font-size: 17px;
+}
+
+.widget-buttons-grid button:hover {
+  background: @tidol-glass-hover;
+  border-color: @tidol-border-hover;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+}
+
+.widget-buttons-grid button:hover > label {
+  color: @tidol-text;
+}
+
+.widget-buttons-grid button:active {
+  background: rgba(29, 185, 84, 0.20);
+  border-color: rgba(29, 185, 84, 0.45);
+}
+
+.widget-buttons-grid button:checked {
+  background: linear-gradient(135deg, @tidol-green 0%, @tidol-green-bright 100%);
+  border-color: rgba(30, 215, 96, 0.50);
+  /* --shadow-glow-primary */
+  box-shadow: 0 20px 40px -10px rgba(29, 185, 84, 0.30);
+}
+
+.widget-buttons-grid button:checked > label {
+  color: #06170D;
+}
+
+
+/* --- MPRIS — reproductor estilo Android ----------------------------------
+ *
+ * Portada a sangre ocupando toda la tarjeta, con el texto y los controles
+ * encima sobre un degradado oscuro. La plantilla de swaync (mpris_player.ui)
+ * ya tiene la forma justa para esto:
+ *
+ *   Underlay
+ *   ├── GtkPicture  .mpris-background   ← content-fit: COVER, a sangre
+ *   └── GtkBox      .mpris-overlay      ← va ENCIMA: aqui va el degradado
+ *       ├── GtkBox [ miniatura | titulo + artista ]
+ *       └── GtkBox halign=CENTER [ shuffle prev play next repeat ]
+ *
+ * La miniatura se oculta con "show-album-art": "never" en config.json, para
+ * que el texto quede sobre la portada completa como en Android.
+ *
+ * LIMITES DE LA PLANTILLA (no son ajustables por CSS):
+ *   · No hay widget para el logo de la fuente (Tidal) ni para el chip de
+ *     salida de audio: las unicas clases que expone el binario son
+ *     mpris-background, mpris-overlay y widget-mpris-album-art/-title/
+ *     -subtitle. El `app-icon` de swaync pertenece a la notificacion.
+ *   · El play vive en la fila inferior con halign=CENTER; halign es propiedad
+ *     del widget, no CSS, asi que no puede irse al centro-derecha.
+ * -------------------------------------------------------------------------*/
+
+.widget-mpris {
+  background: transparent;
+  margin: 6px 0;
+  padding: 0;
+}
+
+/* Portada nitida y a sangre (en Android no va desenfocada).
+   El brillo se baja un poco: el degradado del overlay solo no basta con
+   portadas muy claras. */
+.mpris-background {
+  filter: brightness(0.70) saturate(115%);
+  opacity: 1;
+}
+
+.widget-mpris-player {
+  /* Este fondo solo se ve cuando la pista no trae portada. */
+  background: rgba(18, 18, 18, 0.78);
+  border: none;
+  /* Radio de la media notification de Android */
+  border-radius: 24px;
+  /* SIN box-shadow, a proposito.
+   *
+   * Una sombra outset aqui produce un artefacto visual: GTK la dibuja en la
+   * region EXTERIOR a la caja redondeada —que incluye los cuatro recortes de
+   * las esquinas— y despues la recorta al rectangulo de asignacion del
+   * widget. El resultado es que la sombra rellena justo esas esquinas con
+   * bordes rectos, y la capsula parece tener un rectangulo oscuro pegado
+   * detras que no respeta el border-radius.
+   *
+   * No se arregla dando radio a los hijos: el `overflow: hidden` del
+   * contenedor ya los recorta bien (comprobado midiendo el pixel de la
+   * esquina). El unico elemento que se escapa del recorte es la sombra, asi
+   * que la solucion es no tenerla. Android tampoco la lleva: la tarjeta va
+   * plana sobre la bandeja. */
+  color: #FFFFFF;
+  margin: 0 4px;
+  min-height: 152px;
+  /* El padding lo pone .mpris-overlay: aqui debe ser 0 para que la portada
+     llegue hasta el borde redondeado. */
+  padding: 0;
+}
+
+/* Scrim: oscurece abajo (controles) y a la izquierda (texto), dejando la
+   portada visible a la derecha. Es lo que hace Android para legibilidad.
+
+   No necesita border-radius propio: el `overflow: hidden` del contenedor
+   recorta este degradado siguiendo el radio de .widget-mpris-player. */
+.mpris-overlay {
+  padding: 16px 18px 14px 18px;
+  background:
+    linear-gradient(180deg,
+      rgba(0, 0, 0, 0.18) 0%,
+      rgba(0, 0, 0, 0.05) 28%,
+      rgba(0, 0, 0, 0.42) 70%,
+      rgba(0, 0, 0, 0.72) 100%),
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0.74) 0%,
+      rgba(0, 0, 0, 0.40) 50%,
+      rgba(0, 0, 0, 0.14) 100%);
+    }
+
+/* Oculta por config (show-album-art: never); se neutraliza por si acaso. */
+.widget-mpris-album-art {
+  margin: 0;
+  box-shadow: none;
+}
+
+/* ~20px: es el umbral donde Apple pasa de SF Pro Text a Display. */
+.widget-mpris-title {
+  font-family: "SF Pro Display", "SF Pro Text", sans-serif;
+  color: #FFFFFF;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+}
+
+.widget-mpris-subtitle {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: -0.21px;
+  margin: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+}
+
+/* Controles planos, iconos blancos */
+.widget-mpris-player button {
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  color: #FFFFFF;
+  min-width: 38px;
+  min-height: 38px;
+  margin: 0 2px;
+  padding: 0;
+  -gtk-icon-size: 22px;
+}
+
+.widget-mpris-player button:hover {
+  background: rgba(255, 255, 255, 0.20);
+}
+
+.widget-mpris-player button:active {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* Play/pausa: circulo blanco relleno con el icono oscuro.
+ *
+ * La fila es:  [shuffle] · prev · PLAY · next · [repeat]
+ *
+ * shuffle y repeat se OCULTAN con hide() cuando el reproductor no expone las
+ * propiedades MPRIS Shuffle / LoopStatus (mpris_player.vala:369-390 y 433-475).
+ * prev, play y next no se ocultan nunca: solo cambian de sensitive.
+ *
+ * GTK4 cuenta solo los hijos VISIBLES en :nth-child, asi que un indice fijo se
+ * desplaza segun el reproductor: en uno que no expone ninguna de las dos
+ * propiedades quedan 3 botones y nth-child(3) dejaba de ser PLAY para caer en
+ * "next".
+ *
+ * Por eso se identifica el boton contando desde AMBOS extremos:
+ *   5 visibles  shuffle prev PLAY next repeat  ->  (3, 3)
+ *   4 visibles  prev PLAY next repeat          ->  (2, 3)
+ *   3 visibles  prev PLAY next                 ->  (2, 2)
+ *
+ * El id del GtkBuilder NO se convierte en nombre de widget en GTK4, asi que
+ * "#button_play_pause" no es alternativa: no casa con nada (comprobado).
+ *
+ * Limite conocido: con 4 botones, [shuffle prev PLAY next] y
+ * [prev PLAY next repeat] son indistinguibles en CSS puro. Se asume el segundo,
+ * mas habitual. Si algun reproductor hace lo contrario y el circulo sale en
+ * "prev", cambia (2, 3) por :nth-child(3):nth-last-child(2). */
+.mpris-overlay > box:last-child > button:nth-child(3):nth-last-child(3),
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(3),
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(2) {
+  background: #FFFFFF;
+  color: #0E0E0E;
+  min-width: 52px;
+  min-height: 52px;
+  margin: 0 8px;
+  -gtk-icon-size: 26px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* El icono hay que pintarlo en el GtkImage interno, no en el boton: el reset
+   `* { color: ... }` de arriba casa DIRECTAMENTE con esa imagen, y un match
+   directo gana a heredar el color del padre. Sin esto sale blanco sobre
+   blanco y el circulo aparece vacio. */
+.mpris-overlay > box:last-child > button:nth-child(3):nth-last-child(3) image,
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(3) image,
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(2) image {
+  color: #0E0E0E;
+}
+
+.mpris-overlay > box:last-child > button:nth-child(3):nth-last-child(3):hover,
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(3):hover,
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(2):hover {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.mpris-overlay > box:last-child > button:nth-child(3):nth-last-child(3):active,
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(3):active,
+.mpris-overlay > box:last-child > button:nth-child(2):nth-last-child(2):active {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Flechas de carrusel entre reproductores */
+.widget-mpris > box > button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  -gtk-icon-size: 18px;
+}
+
+.widget-mpris > box > button:hover {
+  color: #FFFFFF;
+}
+
+
+

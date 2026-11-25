@@ -1,0 +1,107 @@
+/* wallpicker.rasi — tema "Vidrio adaptativo" para wall-picker
+ * Base Liquid Glass (como mi_cristal). wall-picker sobrescribe @acento, @borde-activo,
+ * @bg-vidrio-activo y @borde-sutil con el color dominante del wallpaper actual (-theme-str).
+ * Los valores de abajo son el respaldo si se abre rofi con este tema sin wall-picker. */
+* {
+    bg-vidrio:          rgba(20, 20, 28, 0.55);
+    acento:             rgba(215, 222, 235, 1);
+    bg-vidrio-activo:   rgba(255, 255, 255, 0.15);
+    borde-sutil:        rgba(255, 255, 255, 0.12);
+    borde-activo:       rgba(255, 255, 255, 0.45);
+    texto-principal:    #ffffff;
+    texto-secundario:   rgba(255, 255, 255, 0.6);
+
+    background-color:   transparent;
+    text-color:         @texto-principal;
+    font:               "JetBrainsMono Nerd Font 10";
+}
+
+window {
+    background-color:   @bg-vidrio;
+    border:             2px;
+    border-color:       @borde-sutil;
+    border-radius:      18px;
+    width:              1100px;
+    padding:            22px;
+}
+
+mainbox {
+    spacing:            14px;
+    children:           [ inputbar, message, listview ];
+}
+
+inputbar {
+    background-color:   @bg-vidrio-activo;
+    border-radius:      10px;
+    padding:            12px 15px;
+    spacing:            10px;
+    children:           [ prompt, entry ];
+}
+
+prompt { text-color: @acento; }
+
+entry {
+    placeholder:        "Buscar wallpaper...";
+    placeholder-color:  @texto-secundario;
+}
+
+message {
+    padding:            0 4px;
+}
+textbox {
+    text-color:         @texto-secundario;
+}
+
+listview {
+    columns:            4;
+    lines:              3;
+    spacing:            14px;
+    cycle:              false;
+    fixed-height:       true;
+    flow:               horizontal;
+    scrollbar:          false;
+}
+
+element {
+    orientation:        vertical;
+    padding:            8px;
+    spacing:            8px;
+    border:             1px;
+    border-radius:      12px;
+    border-color:       transparent;
+}
+
+element normal.normal,
+element alternate.normal { background-color: transparent; }
+
+element normal.active,
+element alternate.active {
+    background-color:   transparent;
+    border-color:       @borde-sutil;
+}
+
+element selected.normal,
+element selected.active {
+    background-color:   @bg-vidrio-activo;
+    border:             2px;
+    border-color:       @borde-activo;
+}
+
+element normal.active,
+element alternate.active {
+    text-color:         @acento;   /* el wallpaper que está puesto */
+}
+
+element-icon {
+    size:               220px;
+    background-color:   transparent;
+    border-radius:      8px;
+    horizontal-align:   0.5;
+}
+
+element-text {
+    background-color:   transparent;
+    text-color:         inherit;
+    horizontal-align:   0.5;
+    vertical-align:     0.5;
+}

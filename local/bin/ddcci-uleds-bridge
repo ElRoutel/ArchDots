@@ -1,0 +1,265 @@
+#!/usr/bin/env python3
+"""
+ddcci-uleds-bridge — expone el brillo DDC/CI del monitor como un LED del kernel
+================================================================================
+
+swaync solo sabe leer/escribir brillo en /sys/class/backlight o /sys/class/leds;
+no puede lanzar comandos. Este puente crea un LED falso con el modulo `uleds`
+(in-tree, ya presente en el kernel) para que el widget `backlight` nativo de
+swaync funcione con un monitor externo por DDC/CI:
+
+    swaync  ──escribe 0-100──►  /sys/class/leds/ddcci::brightness/brightness
+                                          │  (modulo uleds)
+                                          ▼
+                                    /dev/uleds
+                                          │  este daemon lee el valor
+                                          ▼
+                              ddcutil --bus N --noverify setvcp 10 <valor>
+
+POR QUE HACE FALTA EL DEBOUNCE
+------------------------------
+Una escritura DDC/CI a este monitor tarda ~0.38 s (medido; 0.77 s si se deja que
+ddcutil redetecte los displays en cada llamada, de ahi el --bus fijo). Arrastrar
+un slider genera decenas de eventos, asi que se descartan los intermedios y solo
+se aplica el ultimo tras DEBOUNCE segundos de calma. Sin esto el bus I2C se
+satura y el monitor va a tirones.
+
+ABI de uleds (drivers/leds/uleds.c):
+    struct uleds_user_dev { char name[64]; int max_brightness; };
+Se escribe esa struct una vez en /dev/uleds y a partir de ahi cada read() de
+4 bytes devuelve el nuevo valor de brillo que alguien haya escrito en sysfs.
+"""
+
+import os
+import re
+import select
+import signal
+import socket
+import struct
+import subprocess
+import sys
+import time
+
+# --- Configuracion -----------------------------------------------------------
+
+LED_NAME = "ddcci::brightness"   # debe coincidir con "device" en config.json
+LED_MAX = 100                    # el monitor reporta max value = 100 en VCP 10
+VCP_CODE = "10"                  # 0x10 = Brightness
+DEBOUNCE = 0.15                  # s de calma antes de aplicar el ultimo valor
+DDCUTIL_TIMEOUT = 15             # s
+
+LED_MAX_NAME_SIZE = 64           # LED_MAX_NAME_SIZE en include/linux/leds.h
+ULEDS_DEV = "/dev/uleds"
+SYSFS_BRIGHTNESS = f"/sys/class/leds/{LED_NAME}/brightness"
+
+
+def log(msg):
+    print(msg, file=sys.stderr, flush=True)
+
+
+def sd_notify(estado):
+    """sd_notify(3) minimo, sin dependencias.
+
+    Con Type=notify en la unit, systemd espera a READY=1 antes de arrancar
+    swaync.service. Asi el LED ya existe cuando swaync monta sus widgets: si no
+    existiese, swaync no dibujaria el widget de brillo en absoluto.
+    """
+    addr = os.environ.get("NOTIFY_SOCKET")
+    if not addr:
+        return
+    if addr.startswith("@"):          # socket abstracto
+        addr = "\0" + addr[1:]
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM) as sock:
+            sock.connect(addr)
+            sock.sendall(estado.encode())
+    except OSError:
+        pass
+
+
+# --- ddcutil -----------------------------------------------------------------
+
+def detect_bus():
+    """Devuelve el numero de bus I2C del primer display DDC/CI, o None.
+
+    Se detecta una sola vez al arrancar: `ddcutil detect` es lo mas lento de
+    todo, pero fijar el bus luego ahorra la mitad del tiempo en cada setvcp.
+    """
+    try:
+        out = subprocess.run(
+            ["ddcutil", "detect", "--brief"],
+            capture_output=True, text=True, timeout=40,
+        ).stdout
+    except Exception as exc:
+        log(f"deteccion de bus fallida ({exc}); se dejara que ddcutil resuelva solo")
+        return None
+
+    m = re.search(r"/dev/i2c-(\d+)", out)
+    if not m:
+        log("no se encontro ningun display DDC/CI en `ddcutil detect`")
+        return None
+    return m.group(1)
+
+
+def ddcutil_base(bus):
+    cmd = ["ddcutil"]
+    if bus is not None:
+        cmd += ["--bus", bus]
+    return cmd
+
+
+def read_current(bus):
+    """Lee el brillo actual del monitor para inicializar el slider."""
+    try:
+        out = subprocess.run(
+            ddcutil_base(bus) + ["getvcp", VCP_CODE],
+            capture_output=True, text=True, timeout=DDCUTIL_TIMEOUT,
+        ).stdout
+    except Exception as exc:
+        log(f"no se pudo leer el brillo actual: {exc}")
+        return None
+
+    m = re.search(r"current value\s*=\s*(\d+)", out)
+    return int(m.group(1)) if m else None
+
+
+def apply_brightness(bus, value):
+    """--noverify evita la lectura de comprobacion posterior (mitad de tiempo)."""
+    try:
+        res = subprocess.run(
+            ddcutil_base(bus) + ["--noverify", "setvcp", VCP_CODE, str(value)],
+            capture_output=True, text=True, timeout=DDCUTIL_TIMEOUT,
+        )
+        if res.returncode != 0:
+            log(f"setvcp {value} fallo (rc={res.returncode}): {res.stderr.strip()[:200]}")
+            return False
+        return True
+    except subprocess.TimeoutExpired:
+        log(f"setvcp {value}: timeout")
+    except Exception as exc:
+        log(f"setvcp {value}: {exc}")
+    return False
+
+
+# --- uleds -------------------------------------------------------------------
+
+def create_led():
+    """Abre /dev/uleds y registra el LED. Reintenta: el ACL de uaccess puede
+    tardar un momento en aplicarse cuando la sesion acaba de arrancar."""
+    for intento in range(1, 11):
+        try:
+            fd = os.open(ULEDS_DEV, os.O_RDWR)
+            break
+        except FileNotFoundError:
+            log(f"{ULEDS_DEV} no existe — ¿falta `modprobe uleds`?")
+            return None
+        except PermissionError:
+            if intento == 10:
+                log(f"sin permiso sobre {ULEDS_DEV} tras 10 intentos")
+                return None
+            time.sleep(1)
+    else:
+        return None
+
+    payload = struct.pack(f"{LED_MAX_NAME_SIZE}si",
+                          LED_NAME.encode("ascii"), LED_MAX)
+    os.write(fd, payload)
+    return fd
+
+
+def wait_for_sysfs(timeout=5.0):
+    """Espera a que udev cree el nodo y le aplique la regla de permisos."""
+    limite = time.monotonic() + timeout
+    while time.monotonic() < limite:
+        if os.path.exists(SYSFS_BRIGHTNESS):
+            return True
+        time.sleep(0.05)
+    return False
+
+
+def seed_slider(value):
+    """Coloca el slider en el brillo real del monitor.
+
+    Escribir aqui hace que el kernel nos reenvie el valor por /dev/uleds; el
+    bucle principal lo vera igual a `applied` y no lanzara un setvcp redundante.
+    """
+    try:
+        with open(SYSFS_BRIGHTNESS, "w") as fh:
+            fh.write(str(value))
+        return True
+    except OSError as exc:
+        log(f"no se pudo inicializar el slider ({exc}); "
+            f"comprueba la regla udev sobre {SYSFS_BRIGHTNESS}")
+        return False
+
+
+# --- Main --------------------------------------------------------------------
+
+def main():
+    corriendo = True
+
+    def parar(signum, frame):
+        nonlocal corriendo
+        corriendo = False
+
+    signal.signal(signal.SIGTERM, parar)
+    signal.signal(signal.SIGINT, parar)
+
+    bus = detect_bus()
+    log(f"bus I2C: {bus if bus else '(autodeteccion en cada llamada)'}")
+
+    fd = create_led()
+    if fd is None:
+        return 1
+    log(f"LED registrado: /sys/class/leds/{LED_NAME} (max {LED_MAX})")
+
+    if not wait_for_sysfs():
+        log("aviso: el nodo sysfs no aparecio; ¿regla udev ausente?")
+
+    applied = read_current(bus)
+    if applied is not None:
+        log(f"brillo actual del monitor: {applied}")
+        seed_slider(applied)
+    else:
+        applied = -1
+
+    sd_notify("READY=1")
+
+    pendiente = None
+    limite = None
+
+    while corriendo:
+        espera = None if limite is None else max(0.0, limite - time.monotonic())
+        try:
+            listos, _, _ = select.select([fd], [], [], espera)
+        except InterruptedError:
+            continue
+        except OSError:
+            break
+
+        if listos:
+            try:
+                datos = os.read(fd, 4)
+            except BlockingIOError:
+                continue
+            except OSError:
+                break
+            if len(datos) == 4:
+                pendiente = struct.unpack("i", datos)[0]
+                limite = time.monotonic() + DEBOUNCE
+
+        # Se aplica cuando expira la ventana de calma, no en cada evento.
+        if limite is not None and time.monotonic() >= limite:
+            if pendiente is not None and pendiente != applied:
+                if apply_brightness(bus, pendiente):
+                    applied = pendiente
+            pendiente = None
+            limite = None
+
+    os.close(fd)   # al cerrar el fd, el LED desaparece de /sys/class/leds
+    log("puente detenido")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
