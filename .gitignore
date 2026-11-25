@@ -1,0 +1,5 @@
+# Respaldos locales (los crean los scripts y las ediciones manuales)
+*.bak
+*.bak-*
+*.bak.*
+*.pre260

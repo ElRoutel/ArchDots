@@ -78,7 +78,7 @@ alias net-off='sudo /usr/local/bin/net-optimizer.sh stop && sudo tc qdisc del de
 alias net-stat='tc -s qdisc show dev ifb0'
 
 alias nsend='nvim --server /tmp/nvim-server --remote-silent'
-alias notison='ancs-linux XX:XX:XX:XX:XX:XX & disown'
+alias notison='ancs-linux "$(cat ~/.config/.secrets/phone-mac.txt)" & disown'  # MAC en ~/.config/.secrets (no se versiona)
 alias airplay-reload='sudo systemctl disable --now shairport-sync.service ; systemctl --user restart shairport-sync.service ; systemctl --user status shairport-sync.service'
 # Arregla la cadena AirPlay -> MPRIS -> Waybar (título no aparece en la barra)
 alias airplay-fix='~/.local/bin/fix-airplay.sh'

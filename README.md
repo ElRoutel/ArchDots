@@ -21,7 +21,7 @@ Partes del sistema que viven en su propio repo:
 | `config/kitty/` | `~/.config/kitty/` | Terminal y temas |
 | `config/waybar/` | `~/.config/waybar/` | Barra, módulos y scripts |
 | `config/swaync/` | `~/.config/swaync/` | Notificaciones y centro de control (tema `tidol-glass`) |
-| `config/rofi/` | `~/.config/rofi/` | `config.rasi`, `mi_cristal.rasi`, `wallpicker.rasi` |
+| `config/rofi/` | `~/.config/rofi/` | `config.rasi`, `theme.rasi`, `mi_cristal.rasi` (`wallpicker.rasi` vive en el repo del puente) |
 | `config/wlogout/`, `config/btop/`, `config/starship.toml` | `~/.config/...` | Menú de apagado, monitor, prompt |
 | `config/fastfetch/config.jsonc` | `~/.config/fastfetch/` | Mi config personal (el resto lo instala gradfetch) |
 | `config/systemd/user/` | `~/.config/systemd/user/` | `ddcci-uleds-bridge`, `hyprnotify`, `shairport-sync`, `bitcoind` |
@@ -41,27 +41,32 @@ Partes del sistema que viven en su propio repo:
 | `nvfan.sh` | Perfiles de ventilador NVIDIA (`silent`/`load`/`auto`) |
 | `floating_kitty.sh`, `nvim-special-launch.sh`, `toggle-waybar-borders.sh` | Atajos varios |
 
-## Restaurar desde cero
+## Instalación (enlaces simbólicos)
+
+Este repo **es** la config en uso: `install.sh` enlaza cada carpeta/archivo en su sitio, así que lo que edites en tu sistema ya queda listo para `git commit` y `git push`.
 
 ```bash
-git clone https://github.com/ElRoutel/ArchDots.git ~/ArchDots && cd ~/ArchDots
+git clone https://github.com/ElRoutel/ArchDots.git ~/ArchDots
+~/ArchDots/install.sh --dry   # ver qué haría
+~/ArchDots/install.sh         # enlazar (lo existente se mueve a ~/dotfiles-backup-<fecha>/)
 
-# 1. Configs (respalda lo que ya exista)
-for d in config/*/; do n=$(basename "$d"); [ -e ~/.config/$n ] && mv ~/.config/$n ~/.config/$n.bak; done
-cp -a config/. ~/.config/
-cp -a local/bin/. ~/.local/bin/ && chmod +x ~/.local/bin/*
-cp .zshrc .bashrc .p10k.zsh ~/
-
-# 2. Repos propios
+# Repos propios
 git clone https://github.com/ElRoutel/gradfetch.git ~/gradfetch && ~/gradfetch/install.sh
-git clone https://github.com/ElRoutel/wallpaperengine-wayland-bridge.git ~/wpe-bridge && ~/wpe-bridge/install.sh
+git clone https://github.com/ElRoutel/wallpaperengine-wayland-bridge.git ~/wallpaperengine-wayland-bridge && ~/wallpaperengine-wayland-bridge/install.sh
 
-# 3. Servicios de usuario
-systemctl --user daemon-reload
-systemctl --user enable --now ddcci-uleds-bridge hyprnotify shairport-sync
+# Datos privados (no están en el repo)
+mkdir -p ~/.config/.secrets && chmod 700 ~/.config/.secrets
+echo "XX:XX:XX:XX:XX:XX" > ~/.config/.secrets/phone-mac.txt   # MAC del iPhone para el alias notison
+
+# Servicios de usuario
+systemctl --user enable --now ddcci-uleds-bridge shairport-sync
 ```
+
+Enlazado como carpeta completa: `hypr`, `kitty`, `waybar`, `swaync`, `wlogout`. Archivo por archivo: rofi, btop, starship, fastfetch/config.jsonc, servicios de systemd, `~/.local/bin/*` y los dotfiles de shell.
+
+> ⚠️ `sed -i` **reemplaza un enlace por un archivo normal** (rompe el vínculo con el repo). Usa `sed -i --follow-symlinks` o edita con nvim/código.
 
 ## Notas
 
-- **Datos privados**: los scripts de Waybar leen hosts, IPs y tokens de `~/.config/.secrets/`, que **no** está en el repo. En `.zshrc` la MAC del alias `notison` está reemplazada por `XX:XX:XX:XX:XX:XX`.
+- **Datos privados**: los scripts de Waybar leen hosts, IPs y tokens de `~/.config/.secrets/`, que **no** está en el repo. La MAC del alias `notison` se lee de `~/.config/.secrets/phone-mac.txt`.
 - Los temas de rofi `style_*.rasi` y otros son enlaces a HyDE (`~/.local/share/hyde/rofi/themes/`).
