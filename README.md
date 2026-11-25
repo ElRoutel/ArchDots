@@ -12,6 +12,7 @@ Partes del sistema que viven en su propio repo:
 | [wallpaperengine-wayland-bridge](https://github.com/ElRoutel/wallpaperengine-wayland-bridge) | `set-wall`, `wall-autopause` y `wall-picker` (Wallpaper Engine, videos e imágenes) |
 | [AirWave-Hypr](https://github.com/ElRoutel/AirWave-Hypr) | hyprlock dinámico con portada y AirPlay en Waybar |
 | [Wayland-Custom-Resolution-WCR](https://github.com/ElRoutel/Wayland-Custom-Resolution-WCR) | Refresh rates personalizados vía EDID |
+| [quickshell-mac](https://github.com/ElRoutel/quickshell-mac) *(privado)* | MacShell (centro de control) y MacLock (bloqueo) en `~/.config/quickshell` |
 
 ## Estructura
 
@@ -53,6 +54,9 @@ git clone https://github.com/ElRoutel/ArchDots.git ~/ArchDots
 # Repos propios
 git clone https://github.com/ElRoutel/gradfetch.git ~/gradfetch && ~/gradfetch/install.sh
 git clone https://github.com/ElRoutel/wallpaperengine-wayland-bridge.git ~/wallpaperengine-wayland-bridge && ~/wallpaperengine-wayland-bridge/install.sh
+
+# Quickshell (repo privado: MacShell y MacLock)
+git clone https://github.com/ElRoutel/quickshell-mac.git ~/.config/quickshell
 
 # Datos privados (no están en el repo)
 mkdir -p ~/.config/.secrets && chmod 700 ~/.config/.secrets
